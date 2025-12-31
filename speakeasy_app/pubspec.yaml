@@ -1,0 +1,23 @@
+name: speakeasy
+description: Multi-platform Speakeasy app for Android, iOS, and Web
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  get_it: ^7.6.0
+  flutter_test:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mockito: ^5.4.0
+
+flutter:
+  uses-material-design: true
