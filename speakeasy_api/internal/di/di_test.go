@@ -1,13 +1,11 @@
-package main
+package di
 
 import (
 	"testing"
-
-	"github.com/speakeasy/speakeasy-api/internal/di"
 )
 
 func TestNewContainer(t *testing.T) {
-	container := di.NewContainer()
+	container := NewContainer()
 
 	if container == nil {
 		t.Fatal("Expected non-nil container")
@@ -30,8 +28,8 @@ func TestNewContainer(t *testing.T) {
 	}
 }
 
-func TestDependencyInjection(t *testing.T) {
-	container := di.NewContainer()
+func TestContainer_DependencyInjection(t *testing.T) {
+	container := NewContainer()
 
 	// Verify that handlers have their dependencies
 	if container.UserHandler == nil {
@@ -52,9 +50,9 @@ func TestDependencyInjection(t *testing.T) {
 	}
 }
 
-func TestContainerSingleton(t *testing.T) {
-	container1 := di.NewContainer()
-	container2 := di.NewContainer()
+func TestContainer_Singleton(t *testing.T) {
+	container1 := NewContainer()
+	container2 := NewContainer()
 
 	// Containers are separate instances (not singletons)
 	if container1 == container2 {
