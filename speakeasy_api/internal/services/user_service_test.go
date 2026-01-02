@@ -29,6 +29,9 @@ func createTestUserRepo(t *testing.T) *repositories.UserRepository {
 		t.Fatalf("Failed to create schema: %v", err)
 	}
 
+	t.Cleanup(func() {
+		db.Close()
+	})
 	return repositories.NewUserRepository(db)
 }
 
