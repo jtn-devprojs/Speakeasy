@@ -29,6 +29,9 @@ func createTestAuthService(t *testing.T) *AuthService {
 		t.Fatalf("Failed to create schema: %v", err)
 	}
 
+	t.Cleanup(func() {
+		db.Close()
+	})
 	userRepo := repositories.NewUserRepository(db)
 	return NewAuthService(userRepo)
 }
