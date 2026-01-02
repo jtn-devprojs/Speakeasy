@@ -7,18 +7,38 @@ A modern, cross-platform application built with Flutter (frontend) and Go (backe
 ```
 Speakeasy/
 ├── speakeasy_app/         # Flutter app (Dart)
-│   ├── lib/               # Application source code
+│   ├── lib/
+│   │   ├── main.dart      # Application entry point
+│   │   ├── app.dart       # Root widget and app configuration
+│   │   ├── di.dart        # Dependency injection setup
+│   │   ├── services.dart  # Business logic services
+│   │   └── ...
 │   ├── test/              # Unit tests
-│   └── pubspec.yaml       # Dependencies
+│   │   ├── di_test.dart
+│   │   ├── services_test.dart
+│   │   └── ...
+│   ├── pubspec.yaml       # Dependencies
+│   └── README.md          # App documentation
 │
 ├── speakeasy_api/         # Go API server
-│   ├── cmd/server/        # Server entry point
+│   ├── cmd/
+│   │   └── server/
+│   │       └── main.go    # Server entry point
 │   ├── internal/          # Internal packages
-│   │   ├── di/            # Dependency injection
-│   │   ├── handlers/      # HTTP handlers
-│   │   └── services/      # Business logic
-│   ├── test/              # Unit tests
-│   └── go.mod             # Go module definition
+│   │   ├── di/
+│   │   │   ├── container.go
+│   │   │   └── di_test.go
+│   │   ├── handlers/
+│   │   │   ├── user_handler.go
+│   │   │   └── auth_handler.go
+│   │   └── services/
+│   │       ├── user_service.go
+│   │       ├── user_service_test.go
+│   │       ├── auth_service.go
+│   │       ├── auth_service_test.go
+│   │       └── errors.go
+│   ├── go.mod             # Go module definition
+│   └── README.md          # API documentation
 │
 └── README.md              # This file
 ```
