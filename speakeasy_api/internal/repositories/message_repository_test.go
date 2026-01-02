@@ -8,7 +8,7 @@ import (
 )
 
 func createTestMessageRepo(t *testing.T) *MessageRepository {
-	db, err := sql.Open("sqlite3", ":memory:")
+	db, err := sql.Open("sqlite", ":memory:")
 	if err != nil {
 		t.Fatalf("Failed to create test database: %v", err)
 	}

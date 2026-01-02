@@ -3,6 +3,8 @@ package di
 import (
 	"database/sql"
 
+	_ "modernc.org/sqlite"
+
 	"github.com/speakeasy/speakeasy-api/internal/controllers"
 	"github.com/speakeasy/speakeasy-api/internal/repositories"
 	"github.com/speakeasy/speakeasy-api/internal/services"
