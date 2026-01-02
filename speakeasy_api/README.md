@@ -4,7 +4,7 @@ A high-performance REST API built with Go for the Speakeasy platform. Designed t
 
 ## Architecture
 
-This project follows the **Dependency Injection** pattern with a centralized container for managing service dependencies, ensuring loose coupling and testability.
+This project uses the **Gin Web Framework** for HTTP routing and the **Dependency Injection** pattern with a centralized container for managing service dependencies, ensuring loose coupling and testability.
 
 ### Folder Structure
 
@@ -12,22 +12,30 @@ This project follows the **Dependency Injection** pattern with a centralized con
 speakeasy_api/
 ├── cmd/
 │   └── server/
-│       └── main.go                    # Server entry point
+│       └── main.go                      # Server entry point
 ├── internal/
 │   ├── di/
-│   │   ├── container.go               # Dependency injection container
-│   │   └── di_test.go                 # DI container unit tests
-│   ├── handlers/
-│   │   ├── user_handler.go            # User HTTP handlers
-│   │   └── auth_handler.go            # Authentication HTTP handlers
+│   │   ├── container.go                 # Dependency injection container
+│   │   └── di_test.go                   # DI container unit tests
+│   ├── routes/
+│   │   └── routes.go                    # Route registration
+│   ├── controllers/
+│   │   ├── user_controller.go           # User HTTP controllers
+│   │   ├── user_controller_test.go      # User controller tests
+│   │   ├── auth_controller.go           # Authentication HTTP controllers
+│   │   ├── auth_controller_test.go      # Auth controller tests
+│   │   ├── location_controller.go       # Location HTTP controllers
+│   │   └── location_controller_test.go  # Location controller tests
 │   └── services/
-│       ├── user_service.go            # User business logic
-│       ├── user_service_test.go       # User service unit tests
-│       ├── auth_service.go            # Auth business logic
-│       ├── auth_service_test.go       # Auth service unit tests
-│       └── errors.go                  # Service error definitions
-├── go.mod                             # Go module definition
-└── README.md                          # This file
+│       ├── user_service.go              # User business logic
+│       ├── user_service_test.go         # User service unit tests
+│       ├── auth_service.go              # Auth business logic
+│       ├── auth_service_test.go         # Auth service unit tests
+│       ├── location_service.go          # Location business logic
+│       ├── location_service_test.go     # Location service unit tests
+│       └── errors.go                    # Service error definitions
+├── go.mod                               # Go module definition
+└── README.md                            # This file
 ```
 
 ## Testing
@@ -87,11 +95,11 @@ The DI container is initialized in `internal/di/container.go`:
 
 ```go
 container := di.NewContainer()
-// Access services
+// Access services and controllers
 userService := container.UserService
 authService := container.AuthService
-userHandler := container.UserHandler
-authHandler := container.AuthHandler
+userController := container.UserController
+authController := container.AuthController
 ```
 
 ## Getting Started
@@ -140,18 +148,18 @@ go test ./test
 
 All handler and service methods are currently stubbed with `TODO` markers. Implementation will follow in subsequent phases.
 
-### Handler Implementation
-- [ ] UserHandler.GetUser
-- [ ] UserHandler.CreateUser
-- [ ] UserHandler.UpdateUser
-- [ ] UserHandler.DeleteUser
-- [ ] UserHandler.GetUserPreferences
-- [ ] UserHandler.UpdateUserPreferences
-- [ ] AuthHandler.Login
-- [ ] AuthHandler.Logout
-- [ ] AuthHandler.Register
-- [ ] AuthHandler.ValidateToken
-- [ ] AuthHandler.RefreshToken
+### Controller Implementation
+- [ ] UserController.GetUser
+- [ ] UserController.CreateUser
+- [ ] UserController.UpdateUser
+- [ ] UserController.DeleteUser
+- [ ] UserController.GetUserPreferences
+- [ ] UserController.UpdateUserPreferences
+- [ ] AuthController.Login
+- [ ] AuthController.Logout
+- [ ] AuthController.Register
+- [ ] AuthController.ValidateToken
+- [ ] AuthController.RefreshToken
 
 ### Service Implementation
 - [ ] User service methods
@@ -160,18 +168,22 @@ All handler and service methods are currently stubbed with `TODO` markers. Imple
 - [ ] Token management
 - [ ] Error handling
 
-## Project Structure
+## Project Structure Details
 
 ```
 internal/
 ├── di/
 │   └── container.go          # DI container - manages all dependencies
-├── handlers/
-│   ├── user_handler.go       # HTTP handlers for user operations
-│   └── auth_handler.go       # HTTP handlers for auth operations
+├── routes/
+│   └── routes.go             # Route registration and grouping
+├── controllers/
+│   ├── user_controller.go    # HTTP controllers for user operations
+│   ├── auth_controller.go    # HTTP controllers for auth operations
+│   └── location_controller.go # HTTP controllers for location operations
 └── services/
     ├── user_service.go       # User business logic
     ├── auth_service.go       # Auth business logic
+    ├── location_service.go   # Location business logic
     └── errors.go             # Custom error definitions
 ```
 

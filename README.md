@@ -20,7 +20,7 @@ Speakeasy/
 │   ├── pubspec.yaml       # Dependencies
 │   └── README.md          # App documentation
 │
-├── speakeasy_api/         # Go API server
+├── speakeasy_api/         # Go API server with Gin framework
 │   ├── cmd/
 │   │   └── server/
 │   │       └── main.go    # Server entry point
@@ -28,9 +28,9 @@ Speakeasy/
 │   │   ├── di/
 │   │   │   ├── container.go
 │   │   │   └── di_test.go
-│   │   ├── handlers/
-│   │   │   ├── user_handler.go
-│   │   │   └── auth_handler.go
+│   │   ├── controllers/
+│   │   │   ├── user_controller.go
+│   │   │   └── auth_controller.go
 │   │   └── services/
 │   │       ├── user_service.go
 │   │       ├── user_service_test.go
@@ -86,7 +86,7 @@ Both projects use the **Dependency Injection** pattern for:
 - **Clear dependency flow**
 
 ### API DI Container
-Located in `speakeasy_api/internal/di/container.go`, manages all services and handlers.
+Located in `speakeasy_api/internal/di/container.go`, manages all services and controllers.
 
 ### App DI Container
 Located in `speakeasy_app/lib/di.dart`, uses `get_it` package for service registration.
@@ -108,7 +108,7 @@ Located in `speakeasy_app/lib/di.dart`, uses `get_it` package for service regist
 ## Development Workflow
 
 1. **Implement service methods** in respective service files
-2. **Implement handlers** that use the services
+2. **Implement controllers** that use the services
 3. **Write unit tests** as you implement features
 4. **Register new services** in the DI container
 5. **Connect frontend** to backend endpoints
