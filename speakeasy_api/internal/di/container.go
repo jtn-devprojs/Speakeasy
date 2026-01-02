@@ -7,10 +7,10 @@ import (
 
 // Container holds all application dependencies
 type Container struct {
-	UserService   *services.UserService
-	AuthService   *services.AuthService
-	UserHandler   *handlers.UserHandler
-	AuthHandler   *handlers.AuthHandler
+	UserService *services.UserService
+	AuthService *services.AuthService
+	UserHandler *handlers.UserHandler
+	AuthHandler *handlers.AuthHandler
 }
 
 // NewContainer initializes and returns a new dependency injection container

@@ -28,7 +28,7 @@ func TestNewContainer(t *testing.T) {
 	}
 }
 
-func TestDependencyInjection(t *testing.T) {
+func TestContainer_DependencyInjection(t *testing.T) {
 	container := NewContainer()
 
 	// Verify that handlers have their dependencies
@@ -50,7 +50,7 @@ func TestDependencyInjection(t *testing.T) {
 	}
 }
 
-func TestContainerSingleton(t *testing.T) {
+func TestContainer_Singleton(t *testing.T) {
 	container1 := NewContainer()
 	container2 := NewContainer()
 

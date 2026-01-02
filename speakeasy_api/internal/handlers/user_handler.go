@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/speakeasy/speakeasy-backend/internal/services"
+	"github.com/speakeasy/speakeasy-api/internal/services"
 )
 
 // UserHandler handles HTTP requests related to users

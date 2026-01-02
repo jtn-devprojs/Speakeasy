@@ -12,24 +12,34 @@ This project follows the **Dependency Injection** pattern with a centralized con
 speakeasy_api/
 ├── cmd/
 │   └── server/
-│       └── main.go              # Server entry point
+│       └── main.go                    # Server entry point
 ├── internal/
 │   ├── di/
-│   │   └── container.go         # Dependency injection container
+│   │   ├── container.go               # Dependency injection container
+│   │   └── di_test.go                 # DI container unit tests
 │   ├── handlers/
-│   │   ├── user_handler.go      # User HTTP handlers
-│   │   └── auth_handler.go      # Authentication HTTP handlers
-│   ├── services/
-│   │   ├── user_service.go      # User business logic
-│   │   ├── auth_service.go      # Auth business logic
-│   │   └── errors.go            # Service error definitions
-│   └── ...
-├── test/
-│   ├── di_test.go               # DI container tests
-│   ├── user_service_test.go     # User service tests
-│   └── auth_service_test.go     # Auth service tests
-├── go.mod                        # Go module definition
-└── README.md                     # This file
+│   │   ├── user_handler.go            # User HTTP handlers
+│   │   └── auth_handler.go            # Authentication HTTP handlers
+│   └── services/
+│       ├── user_service.go            # User business logic
+│       ├── user_service_test.go       # User service unit tests
+│       ├── auth_service.go            # Auth business logic
+│       ├── auth_service_test.go       # Auth service unit tests
+│       └── errors.go                  # Service error definitions
+├── go.mod                             # Go module definition
+└── README.md                          # This file
+```
+
+## Testing
+
+Unit tests are co-located with the code they test (white-box testing approach):
+- `internal/services/user_service_test.go` - UserService tests
+- `internal/services/auth_service_test.go` - AuthService tests
+- `internal/di/di_test.go` - DI container tests
+
+Run tests with:
+```bash
+go test ./...
 ```
 
 ## Services

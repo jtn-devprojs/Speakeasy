@@ -12,7 +12,7 @@ func TestNewUserService(t *testing.T) {
 	}
 }
 
-func TestUserServiceGetUserByID(t *testing.T) {
+func TestUserService_GetUserByID(t *testing.T) {
 	service := NewUserService()
 
 	_, err := service.GetUserByID("user123")
@@ -21,7 +21,7 @@ func TestUserServiceGetUserByID(t *testing.T) {
 	}
 }
 
-func TestUserServiceCreateUser(t *testing.T) {
+func TestUserService_CreateUser(t *testing.T) {
 	service := NewUserService()
 
 	_, err := service.CreateUser("testuser", "test@example.com", "password")
@@ -30,7 +30,7 @@ func TestUserServiceCreateUser(t *testing.T) {
 	}
 }
 
-func TestUserServiceUpdateUser(t *testing.T) {
+func TestUserService_UpdateUser(t *testing.T) {
 	service := NewUserService()
 
 	err := service.UpdateUser("user123", map[string]interface{}{})
@@ -39,7 +39,7 @@ func TestUserServiceUpdateUser(t *testing.T) {
 	}
 }
 
-func TestUserServiceDeleteUser(t *testing.T) {
+func TestUserService_DeleteUser(t *testing.T) {
 	service := NewUserService()
 
 	err := service.DeleteUser("user123")
@@ -48,7 +48,7 @@ func TestUserServiceDeleteUser(t *testing.T) {
 	}
 }
 
-func TestUserServiceGetUserPreferences(t *testing.T) {
+func TestUserService_GetUserPreferences(t *testing.T) {
 	service := NewUserService()
 
 	_, err := service.GetUserPreferences("user123")
@@ -57,7 +57,7 @@ func TestUserServiceGetUserPreferences(t *testing.T) {
 	}
 }
 
-func TestUserServiceUpdateUserPreferences(t *testing.T) {
+func TestUserService_UpdateUserPreferences(t *testing.T) {
 	service := NewUserService()
 
 	err := service.UpdateUserPreferences("user123", map[string]interface{}{})

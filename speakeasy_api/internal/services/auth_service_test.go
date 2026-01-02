@@ -13,7 +13,7 @@ func TestNewAuthService(t *testing.T) {
 	}
 }
 
-func TestAuthServiceLogin(t *testing.T) {
+func TestAuthService_Login(t *testing.T) {
 	userService := NewUserService()
 	authService := NewAuthService(userService)
 
@@ -23,7 +23,7 @@ func TestAuthServiceLogin(t *testing.T) {
 	}
 }
 
-func TestAuthServiceLogout(t *testing.T) {
+func TestAuthService_Logout(t *testing.T) {
 	userService := NewUserService()
 	authService := NewAuthService(userService)
 
@@ -33,7 +33,7 @@ func TestAuthServiceLogout(t *testing.T) {
 	}
 }
 
-func TestAuthServiceRegister(t *testing.T) {
+func TestAuthService_Register(t *testing.T) {
 	userService := NewUserService()
 	authService := NewAuthService(userService)
 
@@ -43,7 +43,7 @@ func TestAuthServiceRegister(t *testing.T) {
 	}
 }
 
-func TestAuthServiceValidateToken(t *testing.T) {
+func TestAuthService_ValidateToken(t *testing.T) {
 	userService := NewUserService()
 	authService := NewAuthService(userService)
 
@@ -53,7 +53,7 @@ func TestAuthServiceValidateToken(t *testing.T) {
 	}
 }
 
-func TestAuthServiceRefreshToken(t *testing.T) {
+func TestAuthService_RefreshToken(t *testing.T) {
 	userService := NewUserService()
 	authService := NewAuthService(userService)
 
