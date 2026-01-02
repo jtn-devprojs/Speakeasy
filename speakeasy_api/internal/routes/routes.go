@@ -5,9 +5,7 @@ import (
 	"github.com/speakeasy/speakeasy-api/internal/di"
 )
 
-// RegisterRoutes registers all application routes
 func RegisterRoutes(router *gin.Engine, container *di.Container) {
-	// Register auth routes
 	authGroup := router.Group("/api/auth")
 	{
 		authGroup.POST("/login", container.AuthController.Login)
@@ -17,7 +15,6 @@ func RegisterRoutes(router *gin.Engine, container *di.Container) {
 		authGroup.POST("/refresh", container.AuthController.RefreshToken)
 	}
 
-	// Register user routes
 	userGroup := router.Group("/api/users")
 	{
 		userGroup.GET("/:id", container.UserController.GetUser)
@@ -28,7 +25,6 @@ func RegisterRoutes(router *gin.Engine, container *di.Container) {
 		userGroup.PUT("/:id/preferences", container.UserController.UpdateUserPreferences)
 	}
 
-	// Register location routes
 	locationGroup := router.Group("/api/locations")
 	{
 		locationGroup.POST("/check-vicinity", container.LocationController.CheckVicinity)
@@ -37,7 +33,6 @@ func RegisterRoutes(router *gin.Engine, container *di.Container) {
 		locationGroup.PUT("/user", container.LocationController.UpdateUserLocation)
 	}
 
-	// Health check endpoint
 	router.GET("/api/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "ok"})
 	})
