@@ -26,6 +26,9 @@ func createTestSessionRepo(t *testing.T) *SessionRepository {
 		t.Fatalf("Failed to create schema: %v", err)
 	}
 
+	t.Cleanup(func() {
+		db.Close()
+	})
 	return NewSessionRepository(db)
 }
 
