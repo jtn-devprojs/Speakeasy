@@ -9,11 +9,11 @@ import (
 
 // LocationController handles HTTP requests related to user location
 type LocationController struct {
-	locationService *services.LocationService
+	locationService services.ILocationService
 }
 
 // NewLocationController creates and returns a new LocationController
-func NewLocationController(locationService *services.LocationService) *LocationController {
+func NewLocationController(locationService services.ILocationService) *LocationController {
 	return &LocationController{
 		locationService: locationService,
 	}

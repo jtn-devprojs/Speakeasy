@@ -9,11 +9,11 @@ import (
 
 // UserController handles HTTP requests related to users
 type UserController struct {
-	userService *services.UserService
+	userService services.IUserService
 }
 
 // NewUserController creates and returns a new UserController
-func NewUserController(userService *services.UserService) *UserController {
+func NewUserController(userService services.IUserService) *UserController {
 	return &UserController{
 		userService: userService,
 	}

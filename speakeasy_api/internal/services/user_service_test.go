@@ -8,7 +8,7 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-func createTestUserRepo(t *testing.T) *repositories.UserRepository {
+func createTestUserRepo(t *testing.T) repositories.IUserRepository {
 	db, err := sql.Open("sqlite", ":memory:")
 	if err != nil {
 		t.Fatalf("Failed to create test database: %v", err)
