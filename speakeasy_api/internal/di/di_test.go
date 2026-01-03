@@ -60,7 +60,7 @@ func TestNewContainer(t *testing.T) {
 	db := createTestDB(t)
 	defer db.Close()
 
-	container := NewContainer(db)
+	container := NewContainer(db, "sqlite")
 
 	if container == nil {
 		t.Fatal("Expected non-nil container")
@@ -68,10 +68,6 @@ func TestNewContainer(t *testing.T) {
 
 	if container.DB == nil {
 		t.Fatal("Expected DB to be initialized")
-	}
-
-	if container.UserService == nil {
-		t.Fatal("Expected UserService to be initialized")
 	}
 
 	if container.AuthService == nil {
@@ -94,10 +90,6 @@ func TestNewContainer(t *testing.T) {
 		t.Fatal("Expected SessionUserRepo to be initialized")
 	}
 
-	if container.UserController == nil {
-		t.Fatal("Expected UserController to be initialized")
-	}
-
 	if container.AuthController == nil {
 		t.Fatal("Expected AuthController to be initialized")
 	}
@@ -111,11 +103,7 @@ func TestContainer_DependencyInjection(t *testing.T) {
 	db := createTestDB(t)
 	defer db.Close()
 
-	container := NewContainer(db)
-
-	if container.UserController == nil {
-		t.Fatal("UserController should be initialized")
-	}
+	container := NewContainer(db, "sqlite")
 
 	if container.AuthController == nil {
 		t.Fatal("AuthController should be initialized")
@@ -123,10 +111,6 @@ func TestContainer_DependencyInjection(t *testing.T) {
 
 	if container.SessionController == nil {
 		t.Fatal("SessionController should be initialized")
-	}
-
-	if container.UserService == nil {
-		t.Fatal("UserService should be initialized")
 	}
 
 	if container.AuthService == nil {
@@ -142,14 +126,14 @@ func TestContainer_Singleton(t *testing.T) {
 	db := createTestDB(t)
 	defer db.Close()
 
-	container1 := NewContainer(db)
-	container2 := NewContainer(db)
+	container1 := NewContainer(db, "sqlite")
+	container2 := NewContainer(db, "sqlite")
 
 	if container1 == container2 {
 		t.Fatal("Expected separate container instances")
 	}
 
-	if container1.UserService != container1.UserService {
-		t.Fatal("UserService should be consistent within container")
+	if container1.AuthService != container1.AuthService {
+		t.Fatal("AuthService should be consistent within container")
 	}
 }

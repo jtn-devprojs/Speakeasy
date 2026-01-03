@@ -7,11 +7,16 @@ import (
 	_ "modernc.org/sqlite"
 )
 
+func createTestSessionUserRepo(t *testing.T, db *sql.DB) ISessionUserRepository {
+	locker := &SqliteSessionLocker{}
+	return NewSessionUserRepository(db, locker)
+}
+
 func TestNewSessionUserRepository(t *testing.T) {
 	db := createSessionUserTestDB(t)
 	defer db.Close()
 
-	repo := NewSessionUserRepository(db)
+	repo := createTestSessionUserRepo(t, db)
 
 	if repo == nil {
 		t.Fatal("Expected non-nil SessionUserRepository")
@@ -22,7 +27,7 @@ func TestSessionUserRepository_CreateSessionUser(t *testing.T) {
 	db := createSessionUserTestDB(t)
 	defer db.Close()
 
-	repo := NewSessionUserRepository(db)
+	repo := createTestSessionUserRepo(t, db)
 
 	err := repo.CreateSessionUser("session-1", "user-1")
 	if err != nil {
@@ -51,7 +56,7 @@ func TestSessionUserRepository_UpdateUserLeftTime(t *testing.T) {
 	db := createSessionUserTestDB(t)
 	defer db.Close()
 
-	repo := NewSessionUserRepository(db)
+	repo := createTestSessionUserRepo(t, db)
 
 	err := repo.CreateSessionUser("session-1", "user-1")
 	if err != nil {
@@ -77,7 +82,7 @@ func TestSessionUserRepository_GetActiveUsersInSession(t *testing.T) {
 	db := createSessionUserTestDB(t)
 	defer db.Close()
 
-	repo := NewSessionUserRepository(db)
+	repo := createTestSessionUserRepo(t, db)
 
 	repo.CreateSessionUser("session-1", "user-1")
 	repo.CreateSessionUser("session-1", "user-2")
@@ -97,7 +102,7 @@ func TestSessionUserRepository_GetActiveUserCount(t *testing.T) {
 	db := createSessionUserTestDB(t)
 	defer db.Close()
 
-	repo := NewSessionUserRepository(db)
+	repo := createTestSessionUserRepo(t, db)
 
 	repo.CreateSessionUser("session-1", "user-1")
 	repo.CreateSessionUser("session-1", "user-2")
@@ -128,7 +133,7 @@ func TestSessionUserRepository_IsUserInSession(t *testing.T) {
 	db := createSessionUserTestDB(t)
 	defer db.Close()
 
-	repo := NewSessionUserRepository(db)
+	repo := createTestSessionUserRepo(t, db)
 
 	repo.CreateSessionUser("session-1", "user-1")
 
@@ -166,7 +171,7 @@ func TestSessionUserRepository_GetActiveSessions(t *testing.T) {
 	db := createSessionUserTestDB(t)
 	defer db.Close()
 
-	repo := NewSessionUserRepository(db)
+	repo := createTestSessionUserRepo(t, db)
 
 	repo.CreateSessionUser("session-1", "user-1")
 	repo.CreateSessionUser("session-2", "user-1")
@@ -196,7 +201,7 @@ func TestSessionUserRepository_DuplicateUserInSession(t *testing.T) {
 	db := createSessionUserTestDB(t)
 	defer db.Close()
 
-	repo := NewSessionUserRepository(db)
+	repo := createTestSessionUserRepo(t, db)
 
 	err := repo.CreateSessionUser("session-1", "user-1")
 	if err != nil {
@@ -222,7 +227,7 @@ func TestSessionUserRepository_JoinSessionWithLock(t *testing.T) {
 		t.Fatalf("Failed to create session: %v", err)
 	}
 
-	repo := NewSessionUserRepository(db)
+	repo := createTestSessionUserRepo(t, db)
 
 	// Test successful join
 	err = repo.JoinSessionWithLock("session-1", "user-1")
@@ -245,7 +250,7 @@ func TestSessionUserRepository_JoinSessionWithLock_SessionNotFound(t *testing.T)
 	db := createSessionUserTestDB(t)
 	defer db.Close()
 
-	repo := NewSessionUserRepository(db)
+	repo := createTestSessionUserRepo(t, db)
 
 	// Try to join non-existent session
 	err := repo.JoinSessionWithLock("non-existent", "user-1")
@@ -271,7 +276,7 @@ func TestSessionUserRepository_JoinSessionWithLock_EndedSession(t *testing.T) {
 		t.Fatalf("Failed to create ended session: %v", err)
 	}
 
-	repo := NewSessionUserRepository(db)
+	repo := createTestSessionUserRepo(t, db)
 
 	// Try to join ended session
 	err = repo.JoinSessionWithLock("session-ended", "user-1")
@@ -297,7 +302,7 @@ func TestSessionUserRepository_JoinSessionWithLock_DuplicateJoin(t *testing.T) {
 		t.Fatalf("Failed to create session: %v", err)
 	}
 
-	repo := NewSessionUserRepository(db)
+	repo := createTestSessionUserRepo(t, db)
 
 	// First join succeeds
 	err = repo.JoinSessionWithLock("session-1", "user-1")
@@ -329,7 +334,7 @@ func TestSessionUserRepository_LeaveSessionWithCleanup(t *testing.T) {
 		t.Fatalf("Failed to create session: %v", err)
 	}
 
-	repo := NewSessionUserRepository(db)
+	repo := createTestSessionUserRepo(t, db)
 	repo.JoinSessionWithLock("session-1", "user-1")
 	repo.JoinSessionWithLock("session-1", "user-2")
 
@@ -384,7 +389,7 @@ func TestSessionUserRepository_LeaveSessionWithCleanup_LastUserLeaves(t *testing
 		t.Fatalf("Failed to create session: %v", err)
 	}
 
-	repo := NewSessionUserRepository(db)
+	repo := createTestSessionUserRepo(t, db)
 	repo.JoinSessionWithLock("session-1", "user-1")
 
 	// User-1 leaves (session should be marked as ended)

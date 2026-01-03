@@ -12,19 +12,9 @@ func NewAuthService(userRepo repositories.IUserRepository) *AuthService {
 	}
 }
 
-func (s *AuthService) Login(username, password string) (string, error) {
-	// TODO: Implement Login
-	return "", ErrNotImplemented
-}
-
 func (s *AuthService) Logout(token string) error {
 	// TODO: Implement Logout
 	return ErrNotImplemented
-}
-
-func (s *AuthService) Register(username, email, password string) (map[string]interface{}, error) {
-	// TODO: Implement Register
-	return nil, ErrNotImplemented
 }
 
 func (s *AuthService) ValidateToken(token string) (string, error) {

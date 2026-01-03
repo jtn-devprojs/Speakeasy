@@ -7,7 +7,7 @@ import (
 	"github.com/speakeasy/speakeasy-api/internal/services"
 )
 
-// SessionController handles HTTP requests related to session location
+// SessionController handles HTTP requests related to sessions and user location
 type SessionController struct {
 	sessionService services.ISessionService
 }
@@ -40,12 +40,6 @@ func (c *SessionController) GetNearbyLocations(ctx *gin.Context) {
 // GetUserLocation retrieves the current location of the user
 func (c *SessionController) GetUserLocation(ctx *gin.Context) {
 	// TODO: Implement GetUserLocation
-	ctx.JSON(http.StatusNotImplemented, gin.H{"error": "not implemented"})
-}
-
-// GetSessionLocations retrieves locations of all sessions
-func (c *SessionController) GetSessionLocations(ctx *gin.Context) {
-	// TODO: Implement GetSessionLocations
 	ctx.JSON(http.StatusNotImplemented, gin.H{"error": "not implemented"})
 }
 

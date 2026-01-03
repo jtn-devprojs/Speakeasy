@@ -16,25 +16,33 @@ type Container struct {
 	SessionRepo       repositories.ISessionRepository
 	SessionUserRepo   repositories.ISessionUserRepository
 	MessageRepo       repositories.IMessageRepository
-	UserService       services.IUserService
 	AuthService       services.IAuthService
 	SessionService    services.ISessionService
-	UserController    *controllers.UserController
 	AuthController    *controllers.AuthController
 	SessionController *controllers.SessionController
 }
 
-func NewContainer(db *sql.DB) *Container {
+func NewContainer(db *sql.DB, dbType string) *Container {
 	userRepo := repositories.NewUserRepository(db)
 	sessionRepo := repositories.NewSessionRepository(db)
-	sessionUserRepo := repositories.NewSessionUserRepository(db)
+
+	// Select session locker based on database type
+	var locker repositories.ISessionLocker
+	switch dbType {
+	case "postgres":
+		locker = &repositories.PostgresSessionLocker{}
+	case "sqlite":
+		locker = &repositories.SqliteSessionLocker{}
+	default:
+		locker = &repositories.SqliteSessionLocker{}
+	}
+
+	sessionUserRepo := repositories.NewSessionUserRepository(db, locker)
 	messageRepo := repositories.NewMessageRepository(db)
 
-	userService := services.NewUserService(userRepo)
 	authService := services.NewAuthService(userRepo)
 	sessionService := services.NewSessionService(sessionRepo, sessionUserRepo)
 
-	userController := controllers.NewUserController(userService)
 	authController := controllers.NewAuthController(authService)
 	sessionController := controllers.NewSessionController(sessionService)
 
@@ -44,10 +52,8 @@ func NewContainer(db *sql.DB) *Container {
 		SessionRepo:       sessionRepo,
 		SessionUserRepo:   sessionUserRepo,
 		MessageRepo:       messageRepo,
-		UserService:       userService,
 		AuthService:       authService,
 		SessionService:    sessionService,
-		UserController:    userController,
 		AuthController:    authController,
 		SessionController: sessionController,
 	}
