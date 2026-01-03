@@ -11,16 +11,16 @@ import (
 )
 
 type Container struct {
-	DB                 *sql.DB
-	UserRepo           repositories.IUserRepository
-	SessionRepo        repositories.ISessionRepository
-	MessageRepo        repositories.IMessageRepository
-	UserService        services.IUserService
-	AuthService        services.IAuthService
-	LocationService    services.ILocationService
-	UserController     *controllers.UserController
-	AuthController     *controllers.AuthController
-	LocationController *controllers.LocationController
+	DB                *sql.DB
+	UserRepo          repositories.IUserRepository
+	SessionRepo       repositories.ISessionRepository
+	MessageRepo       repositories.IMessageRepository
+	UserService       services.IUserService
+	AuthService       services.IAuthService
+	LocationService   services.ILocationService
+	UserController    *controllers.UserController
+	AuthController    *controllers.AuthController
+	SessionController *controllers.SessionController
 }
 
 func NewContainer(db *sql.DB) *Container {
@@ -34,18 +34,18 @@ func NewContainer(db *sql.DB) *Container {
 
 	userController := controllers.NewUserController(userService)
 	authController := controllers.NewAuthController(authService)
-	locationController := controllers.NewLocationController(locationService)
+	sessionController := controllers.NewSessionController(locationService)
 
 	return &Container{
-		DB:                 db,
-		UserRepo:           userRepo,
-		SessionRepo:        sessionRepo,
-		MessageRepo:        messageRepo,
-		UserService:        userService,
-		AuthService:        authService,
-		LocationService:    locationService,
-		UserController:     userController,
-		AuthController:     authController,
-		LocationController: locationController,
+		DB:                db,
+		UserRepo:          userRepo,
+		SessionRepo:       sessionRepo,
+		MessageRepo:       messageRepo,
+		UserService:       userService,
+		AuthService:       authService,
+		LocationService:   locationService,
+		UserController:    userController,
+		AuthController:    authController,
+		SessionController: sessionController,
 	}
 }

@@ -30,12 +30,14 @@ Speakeasy/
 │   │   │   └── di_test.go
 │   │   ├── controllers/
 │   │   │   ├── user_controller.go
-│   │   │   └── auth_controller.go
+│   │   │   ├── auth_controller.go
+│   │   │   └── session_controller.go
 │   │   └── services/
 │   │       ├── user_service.go
 │   │       ├── user_service_test.go
 │   │       ├── auth_service.go
 │   │       ├── auth_service_test.go
+│   │       ├── location_service.go
 │   │       └── errors.go
 │   ├── go.mod             # Go module definition
 │   └── README.md          # API documentation
