@@ -34,15 +34,21 @@ Speakeasy/
 │   │   ├── di/
 │   │   │   ├── container.go       # Dependency injection with database abstraction
 │   │   │   └── di_test.go
+│   │   ├── middleware/
+│   │   │   ├── auth.go            # Firebase token validation middleware
+│   │   │   └── auth_test.go
 │   │   ├── controllers/
-│   │   │   ├── auth_controller.go # Token validation endpoints
-│   │   │   └── session_controller.go # Session & location management
+│   │   │   ├── session_controller.go # Session & location management
+│   │   │   └── ...
 │   │   ├── services/
 │   │   │   ├── auth_service.go    # Token validation logic
-│   │   │   └── session_service.go # Session & location logic
+│   │   │   ├── session_service.go # Session & location logic
+│   │   │   ├── mocks.go           # Service mocks for testing
+│   │   │   └── ...
 │   │   └── repositories/
 │   │       ├── interfaces.go      # Database abstraction interfaces
-│   │       ├── session_user_repository.go # Database operations
+│   │       ├── mocks.go           # Repository mocks for testing
+│   │       ├── session_user_repository.go # Database operations with locking
 │   │       └── ...
 │   ├── go.mod             # Go module definition
 │   └── README.md          # API documentation

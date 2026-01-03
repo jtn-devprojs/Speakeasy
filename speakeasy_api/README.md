@@ -13,9 +13,10 @@ This project uses:
 ### Key Design Decisions
 
 1. **No User Management:** Firebase handles user authentication on the client side. The server only validates tokens.
-2. **Token-Based Auth:** All endpoints require Firebase ID tokens in the Authorization header.
-3. **Database Abstraction:** Uses interfaces to abstract database operations, allowing seamless switching between PostgreSQL (production) and SQLite (testing).
-4. **Locking Strategy:**
+2. **Middleware-Based Auth:** Token validation is performed via `AuthMiddleware` applied to protected routes. All session endpoints require valid Firebase ID tokens.
+3. **Heartbeat-Based Logout:** Users are automatically logged out after inactivity. No explicit logout endpoint needed.
+4. **Database Abstraction:** Uses interfaces to abstract database operations, allowing seamless switching between PostgreSQL (production) and SQLite (testing).
+5. **Locking Strategy:**
    - **PostgreSQL:** Uses `FOR UPDATE` for row-level pessimistic locking
    - **SQLite:** Uses implicit transaction locking via SELECT queries
 
@@ -35,10 +36,11 @@ speakeasy_api/
 │   │   ├── container.go                 # DI container with dbType switch for locker selection
 │   │   └── di_test.go                   # DI container unit tests
 │   ├── routes/
-│   │   └── routes.go                    # Route registration
-│   ├── controllers/
-│   │   ├── auth_controller.go           # Token validation endpoints (Logout, ValidateToken, RefreshToken)
-│   │   ├── auth_controller_test.go      # Auth controller tests
+    │   └── routes.go                    # Route registration with middleware
+    ├── middleware/
+    │   ├── auth.go                      # Firebase token validation middleware
+    │   └── auth_test.go                 # Middleware unit tests
+    ├── controllers/
 │   │   ├── session_controller.go        # Session & location management endpoints
 │   │   └── session_controller_test.go   # Session controller tests
 │   ├── services/
@@ -47,30 +49,57 @@ speakeasy_api/
 │   │   ├── auth_service_test.go         # Auth service unit tests
 │   │   ├── session_service.go           # Session & location business logic
 │   │   ├── session_service_test.go      # Session service unit tests
+│   │   ├── mocks.go                     # Service mocks for testing
 │   │   └── errors.go                    # Service error definitions
 │   └── repositories/
 │       ├── interfaces.go                # Repository interfaces (ISessionLocker, ISessionUserRepository, etc.)
+│       ├── mocks.go                     # Repository mocks for testing
 │       ├── session_user_repository.go   # Session user data operations with ISessionLocker injection
-│       ├── session_user_repository_test.go # Session user tests
-│       ├── session_repository.go        # Session data operations
-│       ├── user_repository.go           # User data operations
-│       └── ...
+    │   ├── session_user_repository_test.go # Session user tests
+    │   ├── session_repository.go        # Session data operations
+    │   ├── session_repository_test.go   # Session repository tests
+    │   ├── user_repository.go           # User data operations
+    │   ├── user_repository_test.go      # User repository tests
+    │   ├── message_repository.go        # Message data operations
+    │   └── message_repository_test.go   # Message repository tests
 ├── go.mod                               # Go module definition
 └── README.md                            # This file
 ```
 
 ## API Endpoints
 
-### Authentication
-- `POST /api/auth/logout` - Logout user (revoke token)
-- `POST /api/auth/validate` - Validate Firebase token
-- `POST /api/auth/refresh` - Refresh authentication token
-
 ### Sessions & Locations
+All endpoints require Firebase ID token in `Authorization: Bearer <token>` header.
+
 - `POST /api/sessions/check-vicinity` - Check if user is near a session
 - `GET /api/sessions/nearby` - Get nearby sessions
 - `GET /api/sessions/location` - Get user's current location
-- `PUT /api/sessions/location` - Update user's location
+- `PUT /api/sessions/location` - Update user's location (resets heartbeat)
+
+### Health Check
+- `GET /api/health` - Health check (no auth required)
+
+## Authentication Flow
+
+### Token Validation Middleware
+The `AuthMiddleware` is applied to all protected routes:
+
+1. Client sends request with `Authorization: Bearer <firebase-id-token>` header
+2. Middleware extracts the token from the header
+3. Firebase Admin SDK verifies the token signature and expiration
+4. User ID from the token is stored in the request context
+5. Handler processes the request with authenticated user
+6. If token is invalid or missing, returns 401 Unauthorized
+
+### Logout/Inactivity
+Users are automatically removed from sessions after inactivity:
+
+1. Location update (`PUT /api/sessions/location`) resets the user's heartbeat
+2. Background cleanup process checks for stale heartbeats (timeout configurable)
+3. Users with expired heartbeats are automatically removed from sessions
+4. When a session becomes empty, it's marked as ended
+
+No explicit logout endpoint is needed — the app simply stops sending location updates.
 
 ## Database Abstraction
 
@@ -98,56 +127,16 @@ case "sqlite":
 }
 ```
 
-## Services
-
-### UserService
-Manages user-related business logic.
-- `GetUserByID()` - Retrieve user by ID
-- `CreateUser()` - Create new user
-- `UpdateUser()` - Update user information
-- `DeleteUser()` - Delete user account
-- `GetUserPreferences()` - Retrieve user preferences
-- `UpdateUserPreferences()` - Update user preferences
-
-### AuthService
-Handles authentication and authorization.
-- `Login()` - Authenticate user and return token
-- `Logout()` - Invalidate user session
-- `Register()` - Create new user account
-- `ValidateToken()` - Verify authentication token
-- `RefreshToken()` - Generate new token
-
-## API Endpoints
-
-### Authentication
-- `POST /api/auth/login` - User login
-- `POST /api/auth/logout` - User logout
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/validate` - Token validation
-- `POST /api/auth/refresh` - Token refresh
-
-### Users
-- `GET /api/users/{id}` - Get user
-- `POST /api/users` - Create user
-- `PUT /api/users/{id}` - Update user
-- `DELETE /api/users/{id}` - Delete user
-- `GET /api/users/{id}/preferences` - Get user preferences
-- `PUT /api/users/{id}/preferences` - Update user preferences
-
-### Health Check
-- `GET /api/health` - Server health status
-
 ## Dependency Injection
 
-The DI container is initialized in `internal/di/container.go`:
+The DI container is initialized in `internal/di/container.go` and accepts a `dbType` parameter to select database-specific implementations:
 
 ```go
-container := di.NewContainer()
+container := di.NewContainer(db, "sqlite")  // or "postgres"
 // Access services and controllers
-userService := container.UserService
 authService := container.AuthService
-userController := container.UserController
-authController := container.AuthController
+sessionService := container.SessionService
+sessionController := container.SessionController
 ```
 
 ## Getting Started
@@ -189,57 +178,17 @@ go test -v ./...
 
 Run specific test package:
 ```bash
-go test ./test
+go test ./internal/middleware -v
 ```
 
-## Implementation Status
+## Testing
 
-All handler and service methods are currently stubbed with `TODO` markers. Implementation will follow in subsequent phases.
+The project uses Go's built-in testing framework with:
+- **Unit Tests:** Each package has corresponding `*_test.go` files
+- **Mocks:** Mock implementations of interfaces in `mocks.go` files for isolated testing
+- **Middleware Tests:** Comprehensive tests for auth middleware in `internal/middleware/auth_test.go`
 
-### Controller Implementation
-- [ ] UserController.GetUser
-- [ ] UserController.CreateUser
-- [ ] UserController.UpdateUser
-- [ ] UserController.DeleteUser
-- [ ] UserController.GetUserPreferences
-- [ ] UserController.UpdateUserPreferences
-- [ ] AuthController.Login
-- [ ] AuthController.Logout
-- [ ] AuthController.Register
-- [ ] AuthController.ValidateToken
-- [ ] AuthController.RefreshToken
-
-### Service Implementation
-- [ ] User service methods
-- [ ] Auth service methods
-- [ ] Database integration
-- [ ] Token management
-- [ ] Error handling
-
-## Project Structure Details
-
+Run all tests with coverage:
+```bash
+go test ./... -cover
 ```
-internal/
-├── di/
-│   └── container.go          # DI container - manages all dependencies
-├── routes/
-│   └── routes.go             # Route registration and grouping
-├── controllers/
-│   ├── user_controller.go    # HTTP controllers for user operations
-│   ├── auth_controller.go    # HTTP controllers for auth operations
-│   └── session_controller.go # HTTP controllers for session operations
-└── services/
-    ├── user_service.go       # User business logic
-    ├── auth_service.go       # Auth business logic
-    ├── session_service.go    # Session business logic
-    └── errors.go             # Custom error definitions
-```
-
-## Next Steps
-
-1. Implement database layer (repository pattern)
-2. Add authentication (JWT tokens)
-3. Implement request validation
-4. Add middleware for logging and error handling
-5. Configure environment variables
-6. Add API documentation (OpenAPI/Swagger)

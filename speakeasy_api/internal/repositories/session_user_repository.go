@@ -215,10 +215,9 @@ func (s *SqliteSessionLocker) LockSession(ctx context.Context, tx interface{}, s
 	// The transaction itself provides SERIALIZABLE isolation level
 	// by acquiring a database lock when the first statement executes
 	sqlTx := tx.(*sql.Tx)
-	var count int
 	return sqlTx.QueryRowContext(
 		ctx,
 		"SELECT 1 FROM sessions WHERE id = ?",
 		sessionID,
-	).Scan(&count)
+	).Scan(new(int))
 }

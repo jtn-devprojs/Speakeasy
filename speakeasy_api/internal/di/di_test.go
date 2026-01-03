@@ -90,10 +90,6 @@ func TestNewContainer(t *testing.T) {
 		t.Fatal("Expected SessionUserRepo to be initialized")
 	}
 
-	if container.AuthController == nil {
-		t.Fatal("Expected AuthController to be initialized")
-	}
-
 	if container.SessionController == nil {
 		t.Fatal("Expected SessionController to be initialized")
 	}
@@ -104,10 +100,6 @@ func TestContainer_DependencyInjection(t *testing.T) {
 	defer db.Close()
 
 	container := NewContainer(db, "sqlite")
-
-	if container.AuthController == nil {
-		t.Fatal("AuthController should be initialized")
-	}
 
 	if container.SessionController == nil {
 		t.Fatal("SessionController should be initialized")

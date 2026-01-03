@@ -3,17 +3,13 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/speakeasy/speakeasy-api/internal/di"
+	"github.com/speakeasy/speakeasy-api/internal/middleware"
 )
 
 func RegisterRoutes(router *gin.Engine, container *di.Container) {
-	authGroup := router.Group("/api/auth")
-	{
-		authGroup.POST("/logout", container.AuthController.Logout)
-		authGroup.POST("/validate", container.AuthController.ValidateToken)
-		authGroup.POST("/refresh", container.AuthController.RefreshToken)
-	}
-
+	// Apply auth middleware to protected routes
 	sessionGroup := router.Group("/api/sessions")
+	sessionGroup.Use(middleware.AuthMiddleware(container.AuthService))
 	{
 		sessionGroup.POST("/check-vicinity", container.SessionController.CheckVicinity)
 		sessionGroup.GET("/nearby", container.SessionController.GetNearbyLocations)
