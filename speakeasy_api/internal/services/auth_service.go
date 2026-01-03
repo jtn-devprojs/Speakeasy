@@ -1,43 +1,37 @@
 package services
 
-// AuthService handles authentication-related business logic
+import "github.com/speakeasy/speakeasy-api/internal/repositories"
+
 type AuthService struct {
-	userService *UserService
-	// TODO: Add dependencies like token manager, logger, etc.
+	userRepo repositories.IUserRepository
 }
 
-// NewAuthService creates and returns a new AuthService instance
-func NewAuthService(userService *UserService) *AuthService {
+func NewAuthService(userRepo repositories.IUserRepository) *AuthService {
 	return &AuthService{
-		userService: userService,
+		userRepo: userRepo,
 	}
 }
 
-// Login authenticates a user and returns a token
 func (s *AuthService) Login(username, password string) (string, error) {
 	// TODO: Implement Login
 	return "", ErrNotImplemented
 }
 
-// Logout invalidates a user's session
 func (s *AuthService) Logout(token string) error {
 	// TODO: Implement Logout
 	return ErrNotImplemented
 }
 
-// Register creates a new user account
 func (s *AuthService) Register(username, email, password string) (map[string]interface{}, error) {
 	// TODO: Implement Register
 	return nil, ErrNotImplemented
 }
 
-// ValidateToken validates an authentication token
 func (s *AuthService) ValidateToken(token string) (string, error) {
 	// TODO: Implement ValidateToken
 	return "", ErrNotImplemented
 }
 
-// RefreshToken generates a new token for an authenticated user
 func (s *AuthService) RefreshToken(token string) (string, error) {
 	// TODO: Implement RefreshToken
 	return "", ErrNotImplemented

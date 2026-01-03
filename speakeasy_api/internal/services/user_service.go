@@ -1,46 +1,52 @@
 package services
 
-// UserService handles user-related business logic
+import "github.com/speakeasy/speakeasy-api/internal/repositories"
+
 type UserService struct {
-	// TODO: Add dependencies like repository, logger, etc.
+	userRepo repositories.IUserRepository
 }
 
-// NewUserService creates and returns a new UserService instance
-func NewUserService() *UserService {
-	return &UserService{}
+func NewUserService(userRepo repositories.IUserRepository) *UserService {
+	return &UserService{
+		userRepo: userRepo,
+	}
 }
 
-// GetUserByID retrieves a user by their ID
 func (s *UserService) GetUserByID(userID string) (map[string]interface{}, error) {
-	// TODO: Implement GetUserByID
-	return nil, ErrNotImplemented
+	user, err := s.userRepo.GetUser(userID)
+	if err != nil {
+		return nil, err
+	}
+	if user == nil {
+		return nil, nil
+	}
+	return map[string]interface{}{
+		"id":       user.ID,
+		"username": user.Username,
+		"email":    user.Email,
+		"avatar":   user.AvatarURL,
+	}, nil
 }
 
-// CreateUser creates a new user
 func (s *UserService) CreateUser(username, email, password string) (map[string]interface{}, error) {
 	// TODO: Implement CreateUser
 	return nil, ErrNotImplemented
 }
 
-// UpdateUser updates an existing user
 func (s *UserService) UpdateUser(userID string, data map[string]interface{}) error {
 	// TODO: Implement UpdateUser
 	return ErrNotImplemented
 }
 
-// DeleteUser deletes a user
 func (s *UserService) DeleteUser(userID string) error {
-	// TODO: Implement DeleteUser
-	return ErrNotImplemented
+	return s.userRepo.DeleteUser(userID)
 }
 
-// GetUserPreferences retrieves user preferences
 func (s *UserService) GetUserPreferences(userID string) (map[string]interface{}, error) {
 	// TODO: Implement GetUserPreferences
 	return nil, ErrNotImplemented
 }
 
-// UpdateUserPreferences updates user preferences
 func (s *UserService) UpdateUserPreferences(userID string, preferences map[string]interface{}) error {
 	// TODO: Implement UpdateUserPreferences
 	return ErrNotImplemented

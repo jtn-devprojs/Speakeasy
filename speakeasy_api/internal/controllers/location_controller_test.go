@@ -3,12 +3,13 @@ package controllers
 import (
 	"testing"
 
-	"github.com/gin-gonic/gin"
+	"github.com/speakeasy/speakeasy-api/internal/repositories"
 	"github.com/speakeasy/speakeasy-api/internal/services"
 )
 
 func TestNewLocationController(t *testing.T) {
-	locationService := services.NewLocationService()
+	mockRepo := &repositories.MockSessionRepository{}
+	locationService := services.NewLocationService(mockRepo)
 	controller := NewLocationController(locationService)
 
 	if controller == nil {
@@ -21,49 +22,41 @@ func TestNewLocationController(t *testing.T) {
 }
 
 func TestLocationControllerCheckVicinity(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-	router := gin.New()
-	locationService := services.NewLocationService()
+	mockRepo := &repositories.MockSessionRepository{}
+	locationService := services.NewLocationService(mockRepo)
 	controller := NewLocationController(locationService)
 
-	router.POST("/check-vicinity", controller.CheckVicinity)
-
-	// TODO: Implement test logic when CheckVicinity is implemented
-	// For now, this is a stub to verify the controller is wired correctly
+	if controller == nil {
+		t.Fatal("Expected non-nil controller")
+	}
 }
 
 func TestLocationControllerGetNearbyLocations(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-	router := gin.New()
-	locationService := services.NewLocationService()
+	mockRepo := &repositories.MockSessionRepository{}
+	locationService := services.NewLocationService(mockRepo)
 	controller := NewLocationController(locationService)
 
-	router.GET("/nearby", controller.GetNearbyLocations)
-
-	// TODO: Implement test logic when GetNearbyLocations is implemented
-	// For now, this is a stub to verify the controller is wired correctly
+	if controller == nil {
+		t.Fatal("Expected non-nil controller")
+	}
 }
 
 func TestLocationControllerGetUserLocation(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-	router := gin.New()
-	locationService := services.NewLocationService()
+	mockRepo := &repositories.MockSessionRepository{}
+	locationService := services.NewLocationService(mockRepo)
 	controller := NewLocationController(locationService)
 
-	router.GET("/location", controller.GetUserLocation)
-
-	// TODO: Implement test logic when GetUserLocation is implemented
-	// For now, this is a stub to verify the controller is wired correctly
+	if controller == nil {
+		t.Fatal("Expected non-nil controller")
+	}
 }
 
 func TestLocationControllerUpdateUserLocation(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-	router := gin.New()
-	locationService := services.NewLocationService()
+	mockRepo := &repositories.MockSessionRepository{}
+	locationService := services.NewLocationService(mockRepo)
 	controller := NewLocationController(locationService)
 
-	router.PUT("/location", controller.UpdateUserLocation)
-
-	// TODO: Implement test logic when UpdateUserLocation is implemented
-	// For now, this is a stub to verify the controller is wired correctly
+	if controller == nil {
+		t.Fatal("Expected non-nil controller")
+	}
 }
