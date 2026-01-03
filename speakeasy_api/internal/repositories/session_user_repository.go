@@ -109,7 +109,6 @@ func (r *SessionUserRepository) JoinSessionWithLock(sessionID, userID string) er
 	defer tx.Rollback()
 
 	// Lock the session row to prevent concurrent modifications
-	var endedAt sql.NullTime
 	err = r.locker.LockSession(context.Background(), tx, sessionID)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -118,6 +117,7 @@ func (r *SessionUserRepository) JoinSessionWithLock(sessionID, userID string) er
 		return fmt.Errorf("failed to lock session: %w", err)
 	}
 
+	var endedAt sql.NullTime
 	err = tx.QueryRow(
 		"SELECT ended_at FROM sessions WHERE id = ?",
 		sessionID,
@@ -202,7 +202,7 @@ func (p *PostgresSessionLocker) LockSession(ctx context.Context, tx interface{},
 	sqlTx := tx.(*sql.Tx)
 	return sqlTx.QueryRowContext(
 		ctx,
-		"SELECT 1 FROM sessions WHERE id = ? FOR UPDATE",
+		"SELECT 1 FROM sessions WHERE id = $1 FOR UPDATE",
 		sessionID,
 	).Scan(new(int))
 }
