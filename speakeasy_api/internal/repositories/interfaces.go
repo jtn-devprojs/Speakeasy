@@ -15,6 +15,17 @@ type ISessionRepository interface {
 	DeleteSession(location string) error
 }
 
+type ISessionUserRepository interface {
+	CreateSessionUser(sessionID, userID string) error
+	UpdateUserLeftTime(sessionID, userID string) error
+	GetActiveUsersInSession(sessionID string) ([]*SessionUser, error)
+	GetActiveUserCount(sessionID string) (int, error)
+	IsUserInSession(sessionID, userID string) (bool, error)
+	GetActiveSessions(userID string) ([]*SessionUser, error)
+	JoinSessionWithLock(sessionID, userID string) error
+	LeaveSessionWithCleanup(sessionID, userID string) error
+}
+
 type IMessageRepository interface {
 	CreateMessage(sessionLocation, userID, content string) (int64, error)
 	GetMessagesBySession(sessionLocation string, limit int, offset int64) ([]Message, error)

@@ -31,8 +31,8 @@ speakeasy_api/
 │       ├── user_service_test.go         # User service unit tests
 │       ├── auth_service.go              # Auth business logic
 │       ├── auth_service_test.go         # Auth service unit tests
-│       ├── location_service.go          # Location business logic
-│       ├── location_service_test.go     # Location service unit tests
+│       ├── session_service.go           # Session business logic
+│       ├── session_service_test.go      # Session service unit tests
 │       └── errors.go                    # Service error definitions
 ├── go.mod                               # Go module definition
 └── README.md                            # This file
@@ -183,7 +183,7 @@ internal/
 └── services/
     ├── user_service.go       # User business logic
     ├── auth_service.go       # Auth business logic
-    ├── location_service.go   # Location business logic
+    ├── session_service.go    # Session business logic
     └── errors.go             # Custom error definitions
 ```
 

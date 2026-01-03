@@ -37,7 +37,7 @@ Speakeasy/
 │   │       ├── user_service_test.go
 │   │       ├── auth_service.go
 │   │       ├── auth_service_test.go
-│   │       ├── location_service.go
+│   │       ├── session_service.go
 │   │       └── errors.go
 │   ├── go.mod             # Go module definition
 │   └── README.md          # API documentation
@@ -87,8 +87,25 @@ Both projects use the **Dependency Injection** pattern for:
 - **Centralized configuration** management
 - **Clear dependency flow**
 
-### API DI Container
-Located in `speakeasy_api/internal/di/container.go`, manages all services and controllers.
+### API Architecture
+
+**Data Layer**: Repositories handle all database operations with clean interfaces
+- `IUserRepository` - User CRUD operations
+- `ISessionRepository` - Session management
+- `ISessionUserRepository` - Session membership tracking
+- `IMessageRepository` - Message operations
+
+**Business Layer**: Services contain business logic and transactions
+- `IUserService` - User business logic
+- `IAuthService` - Authentication logic
+- `ISessionService` - Session operations with location handling
+
+**HTTP Layer**: Controllers expose endpoints via Gin framework
+- `UserController` - User endpoints
+- `AuthController` - Auth endpoints
+- `SessionController` - Session endpoints
+
+**DI Container**: Located in `speakeasy_api/internal/di/container.go`, manages all dependencies
 
 ### App DI Container
 Located in `speakeasy_app/lib/di.dart`, uses `get_it` package for service registration.
@@ -102,10 +119,17 @@ Located in `speakeasy_app/lib/di.dart`, uses `get_it` package for service regist
 - **Testing**: flutter_test, mockito
 
 ### API
-- **Language**: Go 1.21+
-- **Router**: Gorilla Mux
-- **DI Pattern**: Manual container
-- **Testing**: Go testing package
+- **Language**: Go 1.24+
+- **Framework**: Gin (HTTP web framework)
+- **Database**: SQLite (in-memory for development/testing)
+- **DI Pattern**: Manual constructor injection with interface-based contracts
+- **Testing**: Go testing package with mocks
+
+### Database Schema (Go Backend)
+- **sessions**: Stores location-based chat sessions with coordinates, accuracy, and timestamps
+- **session_users**: Tracks user participation in sessions with join/leave times
+- **users**: User accounts and profiles
+- **messages**: Chat messages within sessions
 
 ## Development Workflow
 
@@ -117,21 +141,28 @@ Located in `speakeasy_app/lib/di.dart`, uses `get_it` package for service regist
 
 ## Implementation Status
 
-### API Services
-- [ ] User management (create, read, update, delete)
-- [ ] Authentication (login, logout, token management)
-- [ ] User preferences
-- [ ] Database integration
+### API Services & Data Access
+- [x] User repository and service
+- [x] Session repository and service  
+- [x] SessionUser repository (membership tracking)
+- [x] Message repository
+- [x] Dependency injection pattern
+- [x] Database schema design
+- [ ] Location-based proximity matching (Haversine formula)
+- [ ] Session lifecycle management
+- [ ] Authentication (JWT tokens)
 - [ ] Request validation
 - [ ] Error handling middleware
 
 ### App Services
 - [ ] API client HTTP methods
+- [ ] Location services (GPS integration)
 - [ ] Authentication flow
 - [ ] User profile management
-- [ ] Preference synchronization
+- [ ] Session discovery and joining
+- [ ] Chat messaging UI
 - [ ] State management
-- [ ] UI implementation
+- [ ] Location permissions handling
 
 ## API Documentation
 
@@ -152,11 +183,15 @@ String token = await authService.login('user', 'password');
 ### Using Services in Go
 
 ```go
-// Create DI container
-container := di.NewContainer()
+// Create DI container with all dependencies
+container := di.NewContainer(db)
 
 // Access services
 user, err := container.UserService.GetUserByID("123")
+sessions, err := container.SessionService.GetNearbyLocations(lat, lon, radiusKm)
+
+// Access repositories for direct data access
+users, err := container.SessionUserRepo.GetActiveUsersInSession("session-id")
 ```
 
 ## Contributing
@@ -168,10 +203,22 @@ user, err := container.UserService.GetUserByID("123")
 
 ## Next Steps
 
-1. Implement database models and repositories
+### Backend (Go API)
+1. Implement location-based proximity calculations (Haversine formula)
 2. Add JWT token authentication
-3. Set up environment configuration
-4. Add API request/response validation
-5. Implement error handling middleware
-6. Connect frontend to backend
-7. Add comprehensive test coverage
+3. Implement session lifecycle (create, join, leave, end)
+4. Add geolocation API integration (optional: reverse geocoding)
+5. Implement message persistence and retrieval
+6. Add request validation and error handling middleware
+7. Set up environment configuration (port, database, etc.)
+8. Add API documentation (Swagger/OpenAPI)
+
+### Frontend (Flutter App)
+1. Implement GPS location services
+2. Add authentication UI and flow
+3. Create session discovery UI
+4. Build chat interface
+5. Implement real-time message updates
+6. Add location permissions handling
+7. Connect to backend API endpoints
+8. Implement offline-first caching

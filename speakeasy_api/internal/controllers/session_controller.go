@@ -9,13 +9,13 @@ import (
 
 // SessionController handles HTTP requests related to session location
 type SessionController struct {
-	locationService services.ILocationService
+	sessionService services.ISessionService
 }
 
 // NewSessionController creates and returns a new SessionController
-func NewSessionController(locationService services.ILocationService) *SessionController {
+func NewSessionController(sessionService services.ISessionService) *SessionController {
 	return &SessionController{
-		locationService: locationService,
+		sessionService: sessionService,
 	}
 }
 
