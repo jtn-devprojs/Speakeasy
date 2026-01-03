@@ -20,7 +20,7 @@ func main() {
 	}
 	defer db.Close()
 
-	container := di.NewContainer(db)
+	container := di.NewContainer(db, cfg.Database.Type)
 
 	router := gin.Default()
 

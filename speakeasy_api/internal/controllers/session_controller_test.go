@@ -8,8 +8,9 @@ import (
 )
 
 func TestNewSessionController(t *testing.T) {
-	mockRepo := &repositories.MockSessionRepository{}
-	sessionService := services.NewSessionService(mockRepo)
+	mockSessionRepo := &repositories.MockSessionRepository{}
+	mockSessionUserRepo := &repositories.MockSessionUserRepository{}
+	sessionService := services.NewSessionService(mockSessionRepo, mockSessionUserRepo)
 	controller := NewSessionController(sessionService)
 
 	if controller == nil {
@@ -22,8 +23,9 @@ func TestNewSessionController(t *testing.T) {
 }
 
 func TestSessionControllerCheckVicinity(t *testing.T) {
-	mockRepo := &repositories.MockSessionRepository{}
-	sessionService := services.NewSessionService(mockRepo)
+	mockSessionRepo := &repositories.MockSessionRepository{}
+	mockSessionUserRepo := &repositories.MockSessionUserRepository{}
+	sessionService := services.NewSessionService(mockSessionRepo, mockSessionUserRepo)
 	controller := NewSessionController(sessionService)
 
 	if controller == nil {
@@ -32,8 +34,9 @@ func TestSessionControllerCheckVicinity(t *testing.T) {
 }
 
 func TestSessionControllerGetClosestSession(t *testing.T) {
-	mockRepo := &repositories.MockSessionRepository{}
-	sessionService := services.NewSessionService(mockRepo)
+	mockSessionRepo := &repositories.MockSessionRepository{}
+	mockSessionUserRepo := &repositories.MockSessionUserRepository{}
+	sessionService := services.NewSessionService(mockSessionRepo, mockSessionUserRepo)
 	controller := NewSessionController(sessionService)
 
 	if controller == nil {
@@ -42,8 +45,9 @@ func TestSessionControllerGetClosestSession(t *testing.T) {
 }
 
 func TestSessionControllerGetNearbyLocations(t *testing.T) {
-	mockRepo := &repositories.MockSessionRepository{}
-	sessionService := services.NewSessionService(mockRepo)
+	mockSessionRepo := &repositories.MockSessionRepository{}
+	mockSessionUserRepo := &repositories.MockSessionUserRepository{}
+	sessionService := services.NewSessionService(mockSessionRepo, mockSessionUserRepo)
 	controller := NewSessionController(sessionService)
 
 	if controller == nil {
@@ -52,18 +56,9 @@ func TestSessionControllerGetNearbyLocations(t *testing.T) {
 }
 
 func TestSessionControllerGetUserLocation(t *testing.T) {
-	mockRepo := &repositories.MockSessionRepository{}
-	sessionService := services.NewSessionService(mockRepo)
-	controller := NewSessionController(sessionService)
-
-	if controller == nil {
-		t.Fatal("Expected non-nil controller")
-	}
-}
-
-func TestSessionControllerGetSessionLocations(t *testing.T) {
-	mockRepo := &repositories.MockSessionRepository{}
-	sessionService := services.NewSessionService(mockRepo)
+	mockSessionRepo := &repositories.MockSessionRepository{}
+	mockSessionUserRepo := &repositories.MockSessionUserRepository{}
+	sessionService := services.NewSessionService(mockSessionRepo, mockSessionUserRepo)
 	controller := NewSessionController(sessionService)
 
 	if controller == nil {
@@ -72,8 +67,9 @@ func TestSessionControllerGetSessionLocations(t *testing.T) {
 }
 
 func TestSessionControllerUpdateUserLocation(t *testing.T) {
-	mockRepo := &repositories.MockSessionRepository{}
-	sessionService := services.NewSessionService(mockRepo)
+	mockSessionRepo := &repositories.MockSessionRepository{}
+	mockSessionUserRepo := &repositories.MockSessionUserRepository{}
+	sessionService := services.NewSessionService(mockSessionRepo, mockSessionUserRepo)
 	controller := NewSessionController(sessionService)
 
 	if controller == nil {

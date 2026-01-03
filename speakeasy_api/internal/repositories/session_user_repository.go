@@ -1,17 +1,20 @@
 package repositories
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 	"time"
 )
 
 type SessionUserRepository struct {
-	db *sql.DB
+	db     *sql.DB
+	locker ISessionLocker
 }
 
-func NewSessionUserRepository(db *sql.DB) ISessionUserRepository {
-	return &SessionUserRepository{db: db}
+func NewSessionUserRepository(db *sql.DB, locker ISessionLocker) ISessionUserRepository {
+	return &SessionUserRepository{db: db, locker: locker}
 }
 
 type SessionUser struct {
@@ -106,9 +109,17 @@ func (r *SessionUserRepository) JoinSessionWithLock(sessionID, userID string) er
 	defer tx.Rollback()
 
 	// Lock the session row to prevent concurrent modifications
+	err = r.locker.LockSession(context.Background(), tx, sessionID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return fmt.Errorf("session not found")
+		}
+		return fmt.Errorf("failed to lock session: %w", err)
+	}
+
 	var endedAt sql.NullTime
 	err = tx.QueryRow(
-		"SELECT ended_at FROM sessions WHERE id = ? FOR UPDATE",
+		"SELECT ended_at FROM sessions WHERE id = ?",
 		sessionID,
 	).Scan(&endedAt)
 
@@ -116,7 +127,7 @@ func (r *SessionUserRepository) JoinSessionWithLock(sessionID, userID string) er
 		return fmt.Errorf("session not found")
 	}
 	if err != nil {
-		return fmt.Errorf("failed to lock session: %w", err)
+		return fmt.Errorf("failed to query session: %w", err)
 	}
 
 	// Check if session is still active
@@ -131,14 +142,14 @@ func (r *SessionUserRepository) JoinSessionWithLock(sessionID, userID string) er
 	)
 	if err != nil {
 		// Check for duplicate join attempt
-		if err.Error() == "UNIQUE constraint failed: session_users.session_id, session_users.user_id" {
+		if strings.Contains(err.Error(), "UNIQUE constraint failed") {
 			return fmt.Errorf("user already in session")
 		}
 		return fmt.Errorf("failed to join session: %w", err)
 	}
 
 	// Commit transaction (lock released)
-	return tx.Commit().Err
+	return tx.Commit()
 }
 
 // LeaveSessionWithCleanup handles user leaving a session and marks session as ended if empty
@@ -181,5 +192,33 @@ func (r *SessionUserRepository) LeaveSessionWithCleanup(sessionID, userID string
 	}
 
 	// Commit transaction
-	return tx.Commit().Err
+	return tx.Commit()
+}
+
+// PostgresSessionLocker implements ISessionLocker for PostgreSQL using FOR UPDATE
+type PostgresSessionLocker struct{}
+
+func (p *PostgresSessionLocker) LockSession(ctx context.Context, tx interface{}, sessionID string) error {
+	sqlTx := tx.(*sql.Tx)
+	return sqlTx.QueryRowContext(
+		ctx,
+		"SELECT 1 FROM sessions WHERE id = $1 FOR UPDATE",
+		sessionID,
+	).Scan(new(int))
+}
+
+// SqliteSessionLocker implements ISessionLocker for SQLite using implicit transaction locking
+type SqliteSessionLocker struct{}
+
+func (s *SqliteSessionLocker) LockSession(ctx context.Context, tx interface{}, sessionID string) error {
+	// SQLite doesn't support FOR UPDATE, but we ensure the session exists
+	// The transaction itself provides SERIALIZABLE isolation level
+	// by acquiring a database lock when the first statement executes
+	sqlTx := tx.(*sql.Tx)
+	var count int
+	return sqlTx.QueryRowContext(
+		ctx,
+		"SELECT 1 FROM sessions WHERE id = ?",
+		sessionID,
+	).Scan(&count)
 }

@@ -19,21 +19,9 @@ func NewAuthController(authService services.IAuthService) *AuthController {
 	}
 }
 
-// Login authenticates a user
-func (c *AuthController) Login(ctx *gin.Context) {
-	// TODO: Implement Login
-	ctx.JSON(http.StatusNotImplemented, gin.H{"error": "not implemented"})
-}
-
 // Logout logs out a user
 func (c *AuthController) Logout(ctx *gin.Context) {
 	// TODO: Implement Logout
-	ctx.JSON(http.StatusNotImplemented, gin.H{"error": "not implemented"})
-}
-
-// Register creates a new user account
-func (c *AuthController) Register(ctx *gin.Context) {
-	// TODO: Implement Register
 	ctx.JSON(http.StatusNotImplemented, gin.H{"error": "not implemented"})
 }
 

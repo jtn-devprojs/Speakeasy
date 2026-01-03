@@ -44,28 +44,10 @@ func TestNewAuthService(t *testing.T) {
 	}
 }
 
-func TestAuthService_Login(t *testing.T) {
-	authService := createTestAuthService(t)
-
-	_, err := authService.Login("testuser", "password")
-	if err != ErrNotImplemented {
-		t.Fatalf("Expected ErrNotImplemented, got %v", err)
-	}
-}
-
 func TestAuthService_Logout(t *testing.T) {
 	authService := createTestAuthService(t)
 
 	err := authService.Logout("token")
-	if err != ErrNotImplemented {
-		t.Fatalf("Expected ErrNotImplemented, got %v", err)
-	}
-}
-
-func TestAuthService_Register(t *testing.T) {
-	authService := createTestAuthService(t)
-
-	_, err := authService.Register("testuser", "test@example.com", "password")
 	if err != ErrNotImplemented {
 		t.Fatalf("Expected ErrNotImplemented, got %v", err)
 	}

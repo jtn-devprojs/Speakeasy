@@ -21,27 +21,7 @@ func TestNewAuthController(t *testing.T) {
 	}
 }
 
-func TestAuthControllerLogin(t *testing.T) {
-	mockRepo := &repositories.MockUserRepository{}
-	authService := services.NewAuthService(mockRepo)
-	controller := NewAuthController(authService)
-
-	if controller == nil {
-		t.Fatal("Expected non-nil controller")
-	}
-}
-
 func TestAuthControllerLogout(t *testing.T) {
-	mockRepo := &repositories.MockUserRepository{}
-	authService := services.NewAuthService(mockRepo)
-	controller := NewAuthController(authService)
-
-	if controller == nil {
-		t.Fatal("Expected non-nil controller")
-	}
-}
-
-func TestAuthControllerRegister(t *testing.T) {
 	mockRepo := &repositories.MockUserRepository{}
 	authService := services.NewAuthService(mockRepo)
 	controller := NewAuthController(authService)

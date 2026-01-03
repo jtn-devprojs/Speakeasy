@@ -1,5 +1,11 @@
 package repositories
 
+import "context"
+
+type ISessionLocker interface {
+	LockSession(ctx context.Context, tx interface{}, sessionID string) error
+}
+
 type IUserRepository interface {
 	GetUser(id string) (*User, error)
 	GetUserByUsername(username string) (*User, error)
