@@ -17,7 +17,7 @@ type IAuthService interface {
 	RefreshToken(token string) (string, error)
 }
 
-type ILocationService interface {
+type ISessionService interface {
 	IsUserInVicinity(userLat, userLon, targetLat, targetLon, radiusKm float64) bool
 	GetNearbyLocations(userLat, userLon, radiusKm float64) (interface{}, error)
 	GetUserLocation(userID string) (interface{}, error)

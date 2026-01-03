@@ -78,8 +78,20 @@ func TestNewContainer(t *testing.T) {
 		t.Fatal("Expected AuthService to be initialized")
 	}
 
-	if container.LocationService == nil {
-		t.Fatal("Expected LocationService to be initialized")
+	if container.SessionService == nil {
+		t.Fatal("Expected SessionService to be initialized")
+	}
+
+	if container.UserRepo == nil {
+		t.Fatal("Expected UserRepo to be initialized")
+	}
+
+	if container.SessionRepo == nil {
+		t.Fatal("Expected SessionRepo to be initialized")
+	}
+
+	if container.SessionUserRepo == nil {
+		t.Fatal("Expected SessionUserRepo to be initialized")
 	}
 
 	if container.UserController == nil {
@@ -90,8 +102,8 @@ func TestNewContainer(t *testing.T) {
 		t.Fatal("Expected AuthController to be initialized")
 	}
 
-	if container.LocationController == nil {
-		t.Fatal("Expected LocationController to be initialized")
+	if container.SessionController == nil {
+		t.Fatal("Expected SessionController to be initialized")
 	}
 }
 
@@ -109,8 +121,8 @@ func TestContainer_DependencyInjection(t *testing.T) {
 		t.Fatal("AuthController should be initialized")
 	}
 
-	if container.LocationController == nil {
-		t.Fatal("LocationController should be initialized")
+	if container.SessionController == nil {
+		t.Fatal("SessionController should be initialized")
 	}
 
 	if container.UserService == nil {
@@ -121,8 +133,8 @@ func TestContainer_DependencyInjection(t *testing.T) {
 		t.Fatal("AuthService should be initialized")
 	}
 
-	if container.LocationService == nil {
-		t.Fatal("LocationService should be initialized")
+	if container.SessionService == nil {
+		t.Fatal("SessionService should be initialized")
 	}
 }
 

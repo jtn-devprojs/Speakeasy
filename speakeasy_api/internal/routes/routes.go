@@ -25,12 +25,12 @@ func RegisterRoutes(router *gin.Engine, container *di.Container) {
 		userGroup.PUT("/:id/preferences", container.UserController.UpdateUserPreferences)
 	}
 
-	locationGroup := router.Group("/api/locations")
+	sessionGroup := router.Group("/api/sessions")
 	{
-		locationGroup.POST("/check-vicinity", container.LocationController.CheckVicinity)
-		locationGroup.GET("/nearby", container.LocationController.GetNearbyLocations)
-		locationGroup.GET("/user", container.LocationController.GetUserLocation)
-		locationGroup.PUT("/user", container.LocationController.UpdateUserLocation)
+		sessionGroup.POST("/check-vicinity", container.SessionController.CheckVicinity)
+		sessionGroup.GET("/nearby", container.SessionController.GetNearbyLocations)
+		sessionGroup.GET("/user", container.SessionController.GetUserLocation)
+		sessionGroup.PUT("/user", container.SessionController.UpdateUserLocation)
 	}
 
 	router.GET("/api/health", func(c *gin.Context) {

@@ -24,15 +24,15 @@ speakeasy_api/
 │   │   ├── user_controller_test.go      # User controller tests
 │   │   ├── auth_controller.go           # Authentication HTTP controllers
 │   │   ├── auth_controller_test.go      # Auth controller tests
-│   │   ├── location_controller.go       # Location HTTP controllers
-│   │   └── location_controller_test.go  # Location controller tests
+│   │   ├── session_controller.go        # Session HTTP controllers
+│   │   └── session_controller_test.go   # Session controller tests
 │   └── services/
 │       ├── user_service.go              # User business logic
 │       ├── user_service_test.go         # User service unit tests
 │       ├── auth_service.go              # Auth business logic
 │       ├── auth_service_test.go         # Auth service unit tests
-│       ├── location_service.go          # Location business logic
-│       ├── location_service_test.go     # Location service unit tests
+│       ├── session_service.go           # Session business logic
+│       ├── session_service_test.go      # Session service unit tests
 │       └── errors.go                    # Service error definitions
 ├── go.mod                               # Go module definition
 └── README.md                            # This file
@@ -179,11 +179,11 @@ internal/
 ├── controllers/
 │   ├── user_controller.go    # HTTP controllers for user operations
 │   ├── auth_controller.go    # HTTP controllers for auth operations
-│   └── location_controller.go # HTTP controllers for location operations
+│   └── session_controller.go # HTTP controllers for session operations
 └── services/
     ├── user_service.go       # User business logic
     ├── auth_service.go       # Auth business logic
-    ├── location_service.go   # Location business logic
+    ├── session_service.go    # Session business logic
     └── errors.go             # Custom error definitions
 ```
 

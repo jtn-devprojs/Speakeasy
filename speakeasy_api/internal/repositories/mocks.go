@@ -1,5 +1,13 @@
 package repositories
 
+type CustomError struct {
+	Message string
+}
+
+func (e *CustomError) Error() string {
+	return e.Message
+}
+
 type MockUserRepository struct {
 	GetUserFunc           func(id string) (*User, error)
 	CreateUserFunc        func(id, username string, email, avatarURL *string) error
@@ -125,6 +133,73 @@ func (m *MockMessageRepository) UpdateMessage(id int64, content string) error {
 func (m *MockMessageRepository) DeleteMessage(id int64) error {
 	if m.DeleteMessageFunc != nil {
 		return m.DeleteMessageFunc(id)
+	}
+	return nil
+}
+
+type MockSessionUserRepository struct {
+	CreateSessionUserFunc       func(sessionID, userID string) error
+	UpdateUserLeftTimeFunc      func(sessionID, userID string) error
+	GetActiveUsersInSessionFunc func(sessionID string) ([]*SessionUser, error)
+	GetActiveUserCountFunc      func(sessionID string) (int, error)
+	IsUserInSessionFunc         func(sessionID, userID string) (bool, error)
+	GetActiveSessionsFunc       func(userID string) ([]*SessionUser, error)
+	JoinSessionWithLockFunc     func(sessionID, userID string) error
+	LeaveSessionWithCleanupFunc func(sessionID, userID string) error
+}
+
+func (m *MockSessionUserRepository) CreateSessionUser(sessionID, userID string) error {
+	if m.CreateSessionUserFunc != nil {
+		return m.CreateSessionUserFunc(sessionID, userID)
+	}
+	return nil
+}
+
+func (m *MockSessionUserRepository) UpdateUserLeftTime(sessionID, userID string) error {
+	if m.UpdateUserLeftTimeFunc != nil {
+		return m.UpdateUserLeftTimeFunc(sessionID, userID)
+	}
+	return nil
+}
+
+func (m *MockSessionUserRepository) GetActiveUsersInSession(sessionID string) ([]*SessionUser, error) {
+	if m.GetActiveUsersInSessionFunc != nil {
+		return m.GetActiveUsersInSessionFunc(sessionID)
+	}
+	return nil, nil
+}
+
+func (m *MockSessionUserRepository) GetActiveUserCount(sessionID string) (int, error) {
+	if m.GetActiveUserCountFunc != nil {
+		return m.GetActiveUserCountFunc(sessionID)
+	}
+	return 0, nil
+}
+
+func (m *MockSessionUserRepository) IsUserInSession(sessionID, userID string) (bool, error) {
+	if m.IsUserInSessionFunc != nil {
+		return m.IsUserInSessionFunc(sessionID, userID)
+	}
+	return false, nil
+}
+
+func (m *MockSessionUserRepository) GetActiveSessions(userID string) ([]*SessionUser, error) {
+	if m.GetActiveSessionsFunc != nil {
+		return m.GetActiveSessionsFunc(userID)
+	}
+	return nil, nil
+}
+
+func (m *MockSessionUserRepository) JoinSessionWithLock(sessionID, userID string) error {
+	if m.JoinSessionWithLockFunc != nil {
+		return m.JoinSessionWithLockFunc(sessionID, userID)
+	}
+	return nil
+}
+
+func (m *MockSessionUserRepository) LeaveSessionWithCleanup(sessionID, userID string) error {
+	if m.LeaveSessionWithCleanupFunc != nil {
+		return m.LeaveSessionWithCleanupFunc(sessionID, userID)
 	}
 	return nil
 }

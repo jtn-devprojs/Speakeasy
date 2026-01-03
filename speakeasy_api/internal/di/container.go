@@ -11,41 +11,44 @@ import (
 )
 
 type Container struct {
-	DB                 *sql.DB
-	UserRepo           repositories.IUserRepository
-	SessionRepo        repositories.ISessionRepository
-	MessageRepo        repositories.IMessageRepository
-	UserService        services.IUserService
-	AuthService        services.IAuthService
-	LocationService    services.ILocationService
-	UserController     *controllers.UserController
-	AuthController     *controllers.AuthController
-	LocationController *controllers.LocationController
+	DB                *sql.DB
+	UserRepo          repositories.IUserRepository
+	SessionRepo       repositories.ISessionRepository
+	SessionUserRepo   repositories.ISessionUserRepository
+	MessageRepo       repositories.IMessageRepository
+	UserService       services.IUserService
+	AuthService       services.IAuthService
+	SessionService    services.ISessionService
+	UserController    *controllers.UserController
+	AuthController    *controllers.AuthController
+	SessionController *controllers.SessionController
 }
 
 func NewContainer(db *sql.DB) *Container {
 	userRepo := repositories.NewUserRepository(db)
 	sessionRepo := repositories.NewSessionRepository(db)
+	sessionUserRepo := repositories.NewSessionUserRepository(db)
 	messageRepo := repositories.NewMessageRepository(db)
 
 	userService := services.NewUserService(userRepo)
 	authService := services.NewAuthService(userRepo)
-	locationService := services.NewLocationService(sessionRepo)
+	sessionService := services.NewSessionService(sessionRepo, sessionUserRepo)
 
 	userController := controllers.NewUserController(userService)
 	authController := controllers.NewAuthController(authService)
-	locationController := controllers.NewLocationController(locationService)
+	sessionController := controllers.NewSessionController(sessionService)
 
 	return &Container{
-		DB:                 db,
-		UserRepo:           userRepo,
-		SessionRepo:        sessionRepo,
-		MessageRepo:        messageRepo,
-		UserService:        userService,
-		AuthService:        authService,
-		LocationService:    locationService,
-		UserController:     userController,
-		AuthController:     authController,
-		LocationController: locationController,
+		DB:                db,
+		UserRepo:          userRepo,
+		SessionRepo:       sessionRepo,
+		SessionUserRepo:   sessionUserRepo,
+		MessageRepo:       messageRepo,
+		UserService:       userService,
+		AuthService:       authService,
+		SessionService:    sessionService,
+		UserController:    userController,
+		AuthController:    authController,
+		SessionController: sessionController,
 	}
 }
