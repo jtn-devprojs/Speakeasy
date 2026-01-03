@@ -1,10 +1,23 @@
 # Speakeasy API
 
-A high-performance REST API built with Go for the Speakeasy platform. Designed to serve mobile and web clients with user authentication, profile management, and preference handling.
+A high-performance REST API built with Go for the Speakeasy platform. Designed to validate Firebase authentication tokens and manage user sessions and locations.
 
 ## Architecture
 
-This project uses the **Gin Web Framework** for HTTP routing and the **Dependency Injection** pattern with a centralized container for managing service dependencies, ensuring loose coupling and testability.
+This project uses:
+- **Gin Web Framework** for HTTP routing
+- **Dependency Injection (DI) Pattern** with a centralized container for managing service dependencies
+- **Database Abstraction** through interfaces to support multiple databases (PostgreSQL, SQLite)
+- **Interface-based Locking** (`ISessionLocker`) for database-specific pessimistic locking
+
+### Key Design Decisions
+
+1. **No User Management:** Firebase handles user authentication on the client side. The server only validates tokens.
+2. **Token-Based Auth:** All endpoints require Firebase ID tokens in the Authorization header.
+3. **Database Abstraction:** Uses interfaces to abstract database operations, allowing seamless switching between PostgreSQL (production) and SQLite (testing).
+4. **Locking Strategy:**
+   - **PostgreSQL:** Uses `FOR UPDATE` for row-level pessimistic locking
+   - **SQLite:** Uses implicit transaction locking via SELECT queries
 
 ### Folder Structure
 
@@ -14,40 +27,75 @@ speakeasy_api/
 │   └── server/
 │       └── main.go                      # Server entry point
 ├── internal/
+│   ├── config/
+│   │   └── config.go                    # Configuration management
+│   ├── database/
+│   │   └── database.go                  # Database connection setup
 │   ├── di/
-│   │   ├── container.go                 # Dependency injection container
+│   │   ├── container.go                 # DI container with dbType switch for locker selection
 │   │   └── di_test.go                   # DI container unit tests
 │   ├── routes/
 │   │   └── routes.go                    # Route registration
 │   ├── controllers/
-│   │   ├── user_controller.go           # User HTTP controllers
-│   │   ├── user_controller_test.go      # User controller tests
-│   │   ├── auth_controller.go           # Authentication HTTP controllers
+│   │   ├── auth_controller.go           # Token validation endpoints (Logout, ValidateToken, RefreshToken)
 │   │   ├── auth_controller_test.go      # Auth controller tests
-│   │   ├── session_controller.go        # Session HTTP controllers
+│   │   ├── session_controller.go        # Session & location management endpoints
 │   │   └── session_controller_test.go   # Session controller tests
-│   └── services/
-│       ├── user_service.go              # User business logic
-│       ├── user_service_test.go         # User service unit tests
-│       ├── auth_service.go              # Auth business logic
-│       ├── auth_service_test.go         # Auth service unit tests
-│       ├── session_service.go           # Session business logic
-│       ├── session_service_test.go      # Session service unit tests
-│       └── errors.go                    # Service error definitions
+│   ├── services/
+│   │   ├── interfaces.go                # Service interfaces (IAuthService, ISessionService)
+│   │   ├── auth_service.go              # Token validation logic
+│   │   ├── auth_service_test.go         # Auth service unit tests
+│   │   ├── session_service.go           # Session & location business logic
+│   │   ├── session_service_test.go      # Session service unit tests
+│   │   └── errors.go                    # Service error definitions
+│   └── repositories/
+│       ├── interfaces.go                # Repository interfaces (ISessionLocker, ISessionUserRepository, etc.)
+│       ├── session_user_repository.go   # Session user data operations with ISessionLocker injection
+│       ├── session_user_repository_test.go # Session user tests
+│       ├── session_repository.go        # Session data operations
+│       ├── user_repository.go           # User data operations
+│       └── ...
 ├── go.mod                               # Go module definition
 └── README.md                            # This file
 ```
 
-## Testing
+## API Endpoints
 
-Unit tests are co-located with the code they test (white-box testing approach):
-- `internal/services/user_service_test.go` - UserService tests
-- `internal/services/auth_service_test.go` - AuthService tests
-- `internal/di/di_test.go` - DI container tests
+### Authentication
+- `POST /api/auth/logout` - Logout user (revoke token)
+- `POST /api/auth/validate` - Validate Firebase token
+- `POST /api/auth/refresh` - Refresh authentication token
 
-Run tests with:
-```bash
-go test ./...
+### Sessions & Locations
+- `POST /api/sessions/check-vicinity` - Check if user is near a session
+- `GET /api/sessions/nearby` - Get nearby sessions
+- `GET /api/sessions/location` - Get user's current location
+- `PUT /api/sessions/location` - Update user's location
+
+## Database Abstraction
+
+### ISessionLocker Interface
+Provides database-specific locking implementations:
+
+```go
+type ISessionLocker interface {
+    LockSession(ctx context.Context, tx interface{}, sessionID string) error
+}
+```
+
+**Implementations:**
+- `PostgresSessionLocker` - Uses `FOR UPDATE` for row-level locking
+- `SqliteSessionLocker` - Uses implicit transaction locking
+
+The DI container selects the appropriate locker based on `dbType`:
+
+```go
+switch dbType {
+case "postgres":
+    locker = &repositories.PostgresSessionLocker{}
+case "sqlite":
+    locker = &repositories.SqliteSessionLocker{}
+}
 ```
 
 ## Services

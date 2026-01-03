@@ -1,6 +1,12 @@
 # Speakeasy - Multi-Platform App
 
-A modern, cross-platform application built with Flutter (frontend) and Go (backend), designed for Android, iOS, and web platforms.
+A modern, cross-platform application built with Flutter (frontend) and Go (backend), designed for Android, iOS, and web platforms. The system leverages Firebase for client-side authentication with a backend API for session and location management.
+
+## Architecture Overview
+
+**Client (Flutter):** Firebase handles all authentication. The app authenticates users directly with Firebase and receives an ID token.
+
+**Server (Go):** Acts as a lightweight validator and data handler. It validates Firebase tokens and manages user sessions, locations, and preferences without handling user credentials.
 
 ## Project Structure
 
@@ -26,19 +32,18 @@ Speakeasy/
 │   │       └── main.go    # Server entry point
 │   ├── internal/          # Internal packages
 │   │   ├── di/
-│   │   │   ├── container.go
+│   │   │   ├── container.go       # Dependency injection with database abstraction
 │   │   │   └── di_test.go
 │   │   ├── controllers/
-│   │   │   ├── user_controller.go
-│   │   │   ├── auth_controller.go
-│   │   │   └── session_controller.go
-│   │   └── services/
-│   │       ├── user_service.go
-│   │       ├── user_service_test.go
-│   │       ├── auth_service.go
-│   │       ├── auth_service_test.go
-│   │       ├── session_service.go
-│   │       └── errors.go
+│   │   │   ├── auth_controller.go # Token validation endpoints
+│   │   │   └── session_controller.go # Session & location management
+│   │   ├── services/
+│   │   │   ├── auth_service.go    # Token validation logic
+│   │   │   └── session_service.go # Session & location logic
+│   │   └── repositories/
+│   │       ├── interfaces.go      # Database abstraction interfaces
+│   │       ├── session_user_repository.go # Database operations
+│   │       └── ...
 │   ├── go.mod             # Go module definition
 │   └── README.md          # API documentation
 │
