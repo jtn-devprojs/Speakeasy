@@ -7,12 +7,10 @@ import (
 	"github.com/speakeasy/speakeasy-api/internal/services"
 )
 
-// SessionController handles HTTP requests related to sessions and user location
 type SessionController struct {
 	sessionService services.ISessionService
 }
 
-// NewSessionController creates and returns a new SessionController
 func NewSessionController(sessionService services.ISessionService) *SessionController {
 	return &SessionController{
 		sessionService: sessionService,
@@ -25,25 +23,21 @@ func (c *SessionController) CheckVicinity(ctx *gin.Context) {
 	ctx.JSON(http.StatusNotImplemented, gin.H{"error": "not implemented"})
 }
 
-// GetClosestSession retrieves the location of the closest session near the user's current position
 func (c *SessionController) GetClosestSession(ctx *gin.Context) {
 	// TODO: Implement GetClosestSession
 	ctx.JSON(http.StatusNotImplemented, gin.H{"error": "not implemented"})
 }
 
-// GetNearbyLocations retrieves locations near the user's current position
 func (c *SessionController) GetNearbyLocations(ctx *gin.Context) {
 	// TODO: Implement GetNearbyLocations
 	ctx.JSON(http.StatusNotImplemented, gin.H{"error": "not implemented"})
 }
 
-// GetUserLocation retrieves the current location of the user
 func (c *SessionController) GetUserLocation(ctx *gin.Context) {
 	// TODO: Implement GetUserLocation
 	ctx.JSON(http.StatusNotImplemented, gin.H{"error": "not implemented"})
 }
 
-// UpdateUserLocation updates the user's current location
 func (c *SessionController) UpdateUserLocation(ctx *gin.Context) {
 	// TODO: Implement UpdateUserLocation
 	ctx.JSON(http.StatusNotImplemented, gin.H{"error": "not implemented"})

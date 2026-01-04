@@ -5,6 +5,7 @@ import (
 
 	_ "modernc.org/sqlite"
 
+	"github.com/speakeasy/speakeasy-api/internal/config"
 	"github.com/speakeasy/speakeasy-api/internal/controllers"
 	"github.com/speakeasy/speakeasy-api/internal/repositories"
 	"github.com/speakeasy/speakeasy-api/internal/services"
@@ -12,6 +13,7 @@ import (
 
 type Container struct {
 	DB                *sql.DB
+	ConfigLoader      config.ConfigLoader
 	UserRepo          repositories.IUserRepository
 	SessionRepo       repositories.ISessionRepository
 	SessionUserRepo   repositories.ISessionUserRepository
@@ -22,6 +24,7 @@ type Container struct {
 }
 
 func NewContainer(db *sql.DB, dbType string) *Container {
+	configLoader := &config.DefaultConfigLoader{}
 	userRepo := repositories.NewUserRepository(db)
 	sessionRepo := repositories.NewSessionRepository(db)
 
@@ -46,6 +49,7 @@ func NewContainer(db *sql.DB, dbType string) *Container {
 
 	return &Container{
 		DB:                db,
+		ConfigLoader:      configLoader,
 		UserRepo:          userRepo,
 		SessionRepo:       sessionRepo,
 		SessionUserRepo:   sessionUserRepo,

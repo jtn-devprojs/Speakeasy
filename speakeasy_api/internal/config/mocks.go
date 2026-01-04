@@ -25,3 +25,22 @@ func NewMockConfigWithValues(port int, env, dbType, dbConnection string) *Config
 		},
 	}
 }
+
+type MockConfigLoader struct {
+	LoadFunc func(environment string) (*Config, error)
+}
+
+func (mcl *MockConfigLoader) Load(environment string) (*Config, error) {
+	if mcl.LoadFunc != nil {
+		return mcl.LoadFunc(environment)
+	}
+	return NewMockConfig(), nil
+}
+
+func NewMockConfigLoader() *MockConfigLoader {
+	return &MockConfigLoader{
+		LoadFunc: func(environment string) (*Config, error) {
+			return NewMockConfig(), nil
+		},
+	}
+}
