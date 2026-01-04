@@ -53,15 +53,13 @@ func TestDefaultConfigLoader_LoadDevelopment(t *testing.T) {
 	os.Unsetenv("PORT")
 	os.Unsetenv("DB_TYPE")
 	os.Unsetenv("DB_CONNECTION")
+	os.Setenv("ENVIRONMENT", "dev")
+	defer os.Unsetenv("ENVIRONMENT")
 
 	loader := &DefaultConfigLoader{}
-	cfg, err := loader.Load("dev")
+	cfg := loader.LoadConfig()
 
 	// Should load from .env.dev file
-	if err != nil {
-		t.Fatalf("Expected no error, got %v", err)
-	}
-
 	if cfg == nil {
 		t.Fatal("Expected non-nil Config")
 	}
@@ -88,13 +86,10 @@ func TestDefaultConfigLoader_EmptyEnvironmentDefaultsToDevelopment(t *testing.T)
 	os.Unsetenv("PORT")
 	os.Unsetenv("DB_TYPE")
 	os.Unsetenv("DB_CONNECTION")
+	os.Unsetenv("ENVIRONMENT")
 
 	loader := &DefaultConfigLoader{}
-	cfg, err := loader.Load("")
-
-	if err != nil {
-		t.Fatalf("Expected no error, got %v", err)
-	}
+	cfg := loader.LoadConfig()
 
 	if cfg.Server.Env != "dev" {
 		t.Fatalf("Expected environment 'dev', got %s", cfg.Server.Env)
@@ -102,56 +97,52 @@ func TestDefaultConfigLoader_EmptyEnvironmentDefaultsToDevelopment(t *testing.T)
 }
 
 func TestDefaultConfigLoader_MissingPort(t *testing.T) {
+	os.Setenv("ENVIRONMENT", "dev")
+	defer os.Unsetenv("ENVIRONMENT")
+
 	loader := &DefaultConfigLoader{}
-	cfg, err := loader.Load("dev")
+	cfg := loader.LoadConfig()
 
 	// Should load PORT from .env.dev file successfully
-	if err != nil {
-		t.Fatalf("Expected no error, got %v", err)
-	}
-
 	if cfg.Server.Port != 8080 {
 		t.Fatalf("Expected port 8080 from .env file, got %d", cfg.Server.Port)
 	}
 }
 
 func TestDefaultConfigLoader_PortFromFile(t *testing.T) {
+	os.Setenv("ENVIRONMENT", "dev")
+	defer os.Unsetenv("ENVIRONMENT")
+
 	loader := &DefaultConfigLoader{}
-	cfg, err := loader.Load("dev")
+	cfg := loader.LoadConfig()
 
 	// Should load PORT from .env.dev file
-	if err != nil {
-		t.Fatalf("Expected no error, got %v", err)
-	}
-
 	if cfg.Server.Port != 8080 {
 		t.Fatalf("Expected port 8080 from .env file, got %d", cfg.Server.Port)
 	}
 }
 
 func TestDefaultConfigLoader_DatabaseTypeFromFile(t *testing.T) {
+	os.Setenv("ENVIRONMENT", "dev")
+	defer os.Unsetenv("ENVIRONMENT")
+
 	loader := &DefaultConfigLoader{}
-	cfg, err := loader.Load("dev")
+	cfg := loader.LoadConfig()
 
 	// Should load DB_TYPE from .env.dev file
-	if err != nil {
-		t.Fatalf("Expected no error, got %v", err)
-	}
-
 	if cfg.Database.Type != "sqlite" {
 		t.Fatalf("Expected database type 'sqlite' from .env file, got %s", cfg.Database.Type)
 	}
 }
 
 func TestDefaultConfigLoader_DatabaseConnectionFromFile(t *testing.T) {
+	os.Setenv("ENVIRONMENT", "dev")
+	defer os.Unsetenv("ENVIRONMENT")
+
 	loader := &DefaultConfigLoader{}
-	cfg, err := loader.Load("dev")
+	cfg := loader.LoadConfig()
 
 	// Should load DB_CONNECTION from .env.dev file
-	if err != nil {
-		t.Fatalf("Expected no error, got %v", err)
-	}
-
 	if cfg.Database.Connection != ":memory:" {
 		t.Fatalf("Expected connection ':memory:' from .env file, got %s", cfg.Database.Connection)
 	}

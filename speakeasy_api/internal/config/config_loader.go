@@ -25,14 +25,21 @@ type Config struct {
 
 type DefaultConfigLoader struct{}
 
-func (dcl *DefaultConfigLoader) Load(environment string) (*Config, error) {
-	if environment == "" {
-		environment = "dev"
+func (dcl *DefaultConfigLoader) LoadConfig() *Config {
+	env := os.Getenv("ENVIRONMENT")
+	if env == "" {
+		env = "dev"
 	}
 
-	envSettings, err := dcl.loadEnvFile(environment)
+	return dcl.Load(env)
+}
+
+// Load loads configuration for a specific environment
+func (dcl *DefaultConfigLoader) Load(environment string) *Config {
+
+	envSettings, err := dcl.LoadEnvFile(environment)
 	if err != nil {
-		return nil, err
+		panic(fmt.Sprintf("failed to load settings file: %v", err))
 	}
 
 	// Set all settings as environment variables
@@ -49,7 +56,7 @@ func (dcl *DefaultConfigLoader) Load(environment string) (*Config, error) {
 			Type:       dcl.loadAndValidateConfig("DB_TYPE"),
 			Connection: dcl.loadAndValidateConfig("DB_CONNECTION"),
 		},
-	}, nil
+	}
 }
 
 // loadAndValidateInteger retrieves and validates an integer environment variable
@@ -73,20 +80,15 @@ func (dcl *DefaultConfigLoader) loadAndValidateConfig(key string) string {
 
 // TODO: Add a configuration file validator to check for missing or invalid settings
 
-// LoadConfig loads configuration from the ENVIRONMENT variable (backward compatible)
+// LoadConfig is the package-level convenience function to load configuration
+// using the default ConfigLoader implementation
 func LoadConfig() *Config {
-	env := os.Getenv("ENVIRONMENT")
-	if env == "" {
-		env = "dev"
-	}
-
 	loader := &DefaultConfigLoader{}
-	cfg, _ := loader.Load(env)
-	return cfg
+	return loader.LoadConfig()
 }
 
-// loadEnvFile reads a .env file and returns a map of key-value pairs
-func (dcl *DefaultConfigLoader) loadEnvFile(environment string) (map[string]string, error) {
+// LoadEnvFile reads a .env file and returns a map of key-value pairs
+func (dcl *DefaultConfigLoader) LoadEnvFile(environment string) (map[string]string, error) {
 	settings := make(map[string]string)
 
 	envFile := fmt.Sprintf(".env.%s", environment)
