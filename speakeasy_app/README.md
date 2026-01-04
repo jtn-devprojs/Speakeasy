@@ -91,29 +91,29 @@ final authService = getIt<AuthService>();
 ### Installation
 
 1. Navigate to the project directory:
-```bash
+```powershell
 cd speakeasy_app
 ```
 
 2. Install dependencies:
-```bash
+```powershell
 flutter pub get
 ```
 
 3. Run the app:
-```bash
+```powershell
 flutter run
 ```
 
 ### Running Tests
 
 Run all tests:
-```bash
+```powershell
 flutter test
 ```
 
 Run specific test file:
-```bash
+```powershell
 flutter test test/di_test.dart
 ```
 

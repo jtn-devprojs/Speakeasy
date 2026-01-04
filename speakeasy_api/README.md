@@ -148,17 +148,17 @@ sessionController := container.SessionController
 ### Installation
 
 1. Navigate to the project directory:
-```bash
+```powershell
 cd speakeasy_api
 ```
 
 2. Download dependencies:
-```bash
+```powershell
 go mod download
 ```
 
 3. Run the server:
-```bash
+```powershell
 go run cmd/server/main.go
 ```
 
@@ -167,17 +167,17 @@ The server will start on `http://localhost:8080`
 ### Running Tests
 
 Run all tests:
-```bash
+```powershell
 go test ./...
 ```
 
 Run tests with verbose output:
-```bash
+```powershell
 go test -v ./...
 ```
 
 Run specific test package:
-```bash
+```powershell
 go test ./internal/middleware -v
 ```
 

@@ -8,6 +8,24 @@ A modern, cross-platform application built with Flutter (frontend) and Go (backe
 
 **Server (Go):** Acts as a lightweight validator and data handler. It validates Firebase tokens and manages user sessions, locations, and preferences without handling user credentials.
 
+## Prerequisites
+
+### For API Development (Go Backend)
+- **Go 1.21 or higher** — [Download](https://golang.org/dl/)
+- **Git** — For version control
+- **SQLite** — Included with Go (modernc.org/sqlite package)
+
+### For App Development (Flutter Frontend)
+- **Flutter 3.0 or higher** — [Download](https://flutter.dev/docs/get-started/install)
+- **Dart 3.0 or higher** — Included with Flutter
+- **Android SDK** (for Android) and **Xcode** (for iOS)
+- **Git** — For version control
+
+### Development Tools (Optional)
+- **VS Code** with Go extension or **GoLand** IDE
+- **Firebase CLI** — For local emulator setup
+- **Postman** or **cURL** — For API testing
+
 ## Project Structure
 
 ```
@@ -60,34 +78,75 @@ Speakeasy/
 
 ### API (Go)
 
-```bash
+**Download dependencies:**
+```powershell
 cd speakeasy_api
 go mod download
+```
+
+**Run the server (development mode):**
+```powershell
 go run cmd/server/main.go
 ```
-
 Server runs on `http://localhost:8080`
 
-### App (Flutter)
-
-```bash
-cd speakeasy_app
-flutter pub get
-flutter run
+**Build for production:**
+```powershell
+go build -o speakeasy-api .\cmd\server
+.\speakeasy-api
 ```
 
-### Run Tests
-
-**API:**
-```bash
-cd speakeasy_api
+**Run all tests:**
+```powershell
 go test ./...
 ```
 
-**App:**
-```bash
+**Run tests with verbose output:**
+```powershell
+go test -v ./...
+```
+
+**Run tests with coverage report:**
+```powershell
+go test ./... -cover
+```
+
+**Run specific test package:**
+```powershell
+go test ./internal/middleware -v
+```
+
+### App (Flutter)
+
+**Get dependencies:**
+```powershell
 cd speakeasy_app
+flutter pub get
+```
+
+**Run on connected device/emulator:**
+```powershell
+flutter run
+```
+
+**Build APK (Android):**
+```powershell
+flutter build apk
+```
+
+**Build iOS app:**
+```powershell
+flutter build ios
+```
+
+**Run all tests:**
+```powershell
 flutter test
+```
+
+**Run tests with coverage:**
+```powershell
+flutter test --coverage
 ```
 
 ## Architecture Overview
