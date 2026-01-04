@@ -84,11 +84,18 @@ cd speakeasy_api
 go mod download
 ```
 
-**Run the server (development mode):**
+**Run the server (development mode with Firebase emulator):**
 ```powershell
+# Ensure Firebase emulator is running (see below)
 go run cmd/server/main.go
 ```
-Server runs on `http://localhost:8080`
+Server runs on `http://localhost:8080` with `.env.dev` settings
+
+**Run with production settings:**
+```powershell
+$env:ENVIRONMENT = "prod"
+go run cmd/server/main.go
+```
 
 **Build for production:**
 ```powershell
@@ -109,11 +116,6 @@ go test -v ./...
 **Run tests with coverage report:**
 ```powershell
 go test ./... -cover
-```
-
-**Run specific test package:**
-```powershell
-go test ./internal/middleware -v
 ```
 
 ### App (Flutter)
@@ -148,6 +150,36 @@ flutter test
 ```powershell
 flutter test --coverage
 ```
+
+## Firebase Emulator Setup
+
+For local development, use Firebase Emulator Suite for authentication instead of production Firebase:
+
+### Prerequisites
+- **Firebase CLI** — Download the Windows installer from https://firebase.google.com/docs/cli#install-cli-windows or use `npm install -g firebase-tools` if Node.js is available
+- **Node.js** (Optional) — Only required if installing Firebase CLI via npm
+
+### Starting the Emulator
+
+1. **From the project root directory**, start the emulator:
+```powershell
+firebase emulators:start
+```
+
+The Firebase Authentication emulator will start on `localhost:9099`
+
+2. **API automatically detects the emulator** via `.env.dev`:
+   - `FIREBASE_EMULATOR_HOST=localhost:9099` is automatically loaded
+   - Auth middleware will validate tokens against the emulator
+
+3. **Configure Flutter app** to use the emulator (see `speakeasy_app/README.md` for details)
+
+### Creating Test Users
+
+With the Firebase emulator running, create test users via the Emulator UI:
+- Open: `http://localhost:4000` (Emulator UI)
+- Go to Authentication tab
+- Click "Add user" to create test accounts for development
 
 ## Architecture Overview
 

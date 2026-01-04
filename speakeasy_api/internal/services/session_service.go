@@ -17,15 +17,11 @@ func NewSessionService(
 	}
 }
 
-// JoinSession handles user joining an active session
 func (s *SessionService) JoinSession(sessionID, userID string) error {
-	// Repository handles transaction, lock, and validation
 	return s.sessionUserRepo.JoinSessionWithLock(sessionID, userID)
 }
 
-// LeaveSession handles user leaving a session
 func (s *SessionService) LeaveSession(sessionID, userID string) error {
-	// Repository handles transaction and cleanup
 	return s.sessionUserRepo.LeaveSessionWithCleanup(sessionID, userID)
 }
 
