@@ -219,15 +219,7 @@ $env:ENVIRONMENT = "prod"
 go run cmd/server/main.go
 ```
 
-To override specific settings:
-
-```powershell
-# Override via environment variables
-$env:PORT = "9000"
-$env:DB_TYPE = "postgres"
-$env:DB_CONNECTION = "user:pass@localhost:5432/speakeasy"
-go run cmd/server/main.go
-```
+**Note:** All configuration values (PORT, DB_TYPE, DB_CONNECTION) must be defined in the corresponding `.env.{environment}` file. Environment variable overrides are not supported — settings are loaded exclusively from files to ensure consistent, predictable configuration in both development and production environments.
 
 ### Running Tests
 

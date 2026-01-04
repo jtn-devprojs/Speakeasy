@@ -23,7 +23,9 @@ type Config struct {
 	Database DatabaseConfig
 }
 
-type DefaultConfigLoader struct{}
+type DefaultConfigLoader struct {
+	envSettings map[string]string
+}
 
 func (dcl *DefaultConfigLoader) LoadConfig() *Config {
 	env := os.Getenv("ENVIRONMENT")
@@ -42,10 +44,8 @@ func (dcl *DefaultConfigLoader) Load(environment string) *Config {
 		panic(fmt.Sprintf("failed to load settings file: %v", err))
 	}
 
-	// Set all settings as environment variables
-	for key, value := range envSettings {
-		os.Setenv(key, value)
-	}
+	// Store settings in the loader instance for use by validation methods
+	dcl.envSettings = envSettings
 
 	return &Config{
 		Server: ServerConfig{
@@ -71,9 +71,9 @@ func (dcl *DefaultConfigLoader) loadAndValidateInteger(key string) int {
 
 // loadAndValidateConfig retrieves an environment variable and panics if it's not found
 func (dcl *DefaultConfigLoader) loadAndValidateConfig(key string) string {
-	value := os.Getenv(key)
-	if value == "" {
-		panic(fmt.Sprintf("%s not found in settings file", key))
+	value := os.Getenv(key) config value from envSettings and panics if it's not found
+func (dcl *DefaultConfigLoader) loadAndValidateConfig(key string) string {
+	value := dcl.envSettings[key]not found in settings file", key))
 	}
 	return value
 }

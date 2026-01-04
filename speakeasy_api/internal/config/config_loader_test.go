@@ -50,9 +50,6 @@ func TestNewMockConfigWithValues(t *testing.T) {
 }
 
 func TestDefaultConfigLoader_LoadDevelopment(t *testing.T) {
-	os.Unsetenv("PORT")
-	os.Unsetenv("DB_TYPE")
-	os.Unsetenv("DB_CONNECTION")
 	os.Setenv("ENVIRONMENT", "dev")
 	defer os.Unsetenv("ENVIRONMENT")
 
@@ -82,11 +79,9 @@ func TestDefaultConfigLoader_LoadDevelopment(t *testing.T) {
 }
 
 func TestDefaultConfigLoader_EmptyEnvironmentDefaultsToDevelopment(t *testing.T) {
-	// Clear environment variables
-	os.Unsetenv("PORT")
-	os.Unsetenv("DB_TYPE")
-	os.Unsetenv("DB_CONNECTION")
+	// Clear ENVIRONMENT variable
 	os.Unsetenv("ENVIRONMENT")
+	defer os.Setenv("ENVIRONMENT", os.Getenv("ENVIRONMENT"))
 
 	loader := &DefaultConfigLoader{}
 	cfg := loader.LoadConfig()
