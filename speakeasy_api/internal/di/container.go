@@ -18,7 +18,6 @@ type Container struct {
 	MessageRepo       repositories.IMessageRepository
 	AuthService       services.IAuthService
 	SessionService    services.ISessionService
-	AuthController    *controllers.AuthController
 	SessionController *controllers.SessionController
 }
 
@@ -43,7 +42,6 @@ func NewContainer(db *sql.DB, dbType string) *Container {
 	authService := services.NewAuthService(userRepo)
 	sessionService := services.NewSessionService(sessionRepo, sessionUserRepo)
 
-	authController := controllers.NewAuthController(authService)
 	sessionController := controllers.NewSessionController(sessionService)
 
 	return &Container{
@@ -54,7 +52,6 @@ func NewContainer(db *sql.DB, dbType string) *Container {
 		MessageRepo:       messageRepo,
 		AuthService:       authService,
 		SessionService:    sessionService,
-		AuthController:    authController,
 		SessionController: sessionController,
 	}
 }

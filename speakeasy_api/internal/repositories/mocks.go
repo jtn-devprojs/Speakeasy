@@ -1,10 +1,10 @@
 package repositories
 
-type CustomError struct {
+type MockError struct {
 	Message string
 }
 
-func (e *CustomError) Error() string {
+func (e *MockError) Error() string {
 	return e.Message
 }
 

@@ -44,7 +44,7 @@ func TestSessionService_JoinSession_Error(t *testing.T) {
 
 	// Configure mock to fail
 	mockSessionUserRepo.JoinSessionWithLockFunc = func(sessionID, userID string) error {
-		return &repositories.CustomError{Message: "session not found"}
+		return &repositories.MockError{Message: "session not found"}
 	}
 
 	err := service.JoinSession("non-existent", "user-1")
@@ -81,7 +81,7 @@ func TestSessionService_LeaveSession_Error(t *testing.T) {
 
 	// Configure mock to fail
 	mockSessionUserRepo.LeaveSessionWithCleanupFunc = func(sessionID, userID string) error {
-		return &repositories.CustomError{Message: "user not in session"}
+		return &repositories.MockError{Message: "user not in session"}
 	}
 
 	err := service.LeaveSession("session-1", "unknown-user")
