@@ -91,9 +91,6 @@ func TestAuthMiddleware_InvalidHeaderFormat(t *testing.T) {
 func TestAuthMiddleware_InvalidToken(t *testing.T) {
 	mockAuthService := &services.MockAuthService{
 		ValidateTokenFunc: func(token string) (string, error) {
-			if token == "invalid-token" {
-				return "", services.ErrNotImplemented
-			}
 			return "", services.ErrNotImplemented
 		},
 	}
@@ -122,6 +119,26 @@ func TestAuthMiddleware_BearerWithoutToken(t *testing.T) {
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("GET", "/api/sessions", nil)
 	req.Header.Set("Authorization", "Bearer")
+
+	router := gin.New()
+	router.GET("/api/sessions", middleware, func(c *gin.Context) {
+		t.Fatal("Expected handler not to be called")
+	})
+
+	router.ServeHTTP(w, req)
+
+	if w.Code != http.StatusUnauthorized {
+		t.Fatalf("Expected status 401, got %d", w.Code)
+	}
+}
+
+func TestAuthMiddleware_BearerWithEmptyToken(t *testing.T) {
+	mockAuthService := &services.MockAuthService{}
+	middleware := AuthMiddleware(mockAuthService)
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest("GET", "/api/sessions", nil)
+	req.Header.Set("Authorization", "Bearer ")
 
 	router := gin.New()
 	router.GET("/api/sessions", middleware, func(c *gin.Context) {

@@ -10,7 +10,7 @@ func (m *MockAuthService) Logout(token string) error {
 	if m.LogoutFunc != nil {
 		return m.LogoutFunc(token)
 	}
-	return nil
+	return ErrNotImplemented
 }
 
 func (m *MockAuthService) ValidateToken(token string) (string, error) {
